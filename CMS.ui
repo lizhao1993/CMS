@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>710</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>681</width>
+     <height>461</height>
+    </rect>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="Attendance">
+    <attribute name="title">
+     <string>Attendance</string>
+    </attribute>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>631</width>
+       <height>371</height>
+      </rect>
+     </property>
+     <row>
+      <property name="text">
+       <string>Student1</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Student2</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Units</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Today</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Date1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Date2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Total Unexcused</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>HW1</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>HW2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Total Grade</string>
+      </property>
+     </column>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="Roster">
+    <attribute name="title">
+     <string>Roster</string>
+    </attribute>
+    <widget class="QTableView" name="tableView">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>20</y>
+       <width>301</width>
+       <height>381</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="toolButton">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>130</y>
+       <width>121</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Import From Excel</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="Projects">
+    <attribute name="title">
+     <string>Projects</string>
+    </attribute>
+    <widget class="QTabWidget" name="tabWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>70</y>
+       <width>321</width>
+       <height>301</height>
+      </rect>
+     </property>
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Project 1</string>
+      </attribute>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Project 2</string>
+      </attribute>
+     </widget>
+    </widget>
+    <widget class="QTextEdit" name="textEdit">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>140</y>
+       <width>241</width>
+       <height>131</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>500</x>
+       <y>110</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="geometry">
+      <rect>
+       <x>510</x>
+       <y>300</y>
+       <width>101</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>110</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Choose Project</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>370</x>
+       <y>300</y>
+       <width>121</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Choose Weekly Points</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>330</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Submit</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="geometry">
+      <rect>
+       <x>350</x>
+       <y>80</y>
+       <width>291</width>
+       <height>291</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Give Feedback</string>
+     </property>
+    </widget>
+    <zorder>groupBox</zorder>
+    <zorder>tabWidget_2</zorder>
+    <zorder>textEdit</zorder>
+    <zorder>comboBox</zorder>
+    <zorder>comboBox_2</zorder>
+    <zorder>label</zorder>
+    <zorder>label_2</zorder>
+    <zorder>pushButton</zorder>
+   </widget>
+   <widget class="QWidget" name="Export">
+    <attribute name="title">
+     <string>Export</string>
+    </attribute>
+    <widget class="QPushButton" name="exportbutton">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>100</y>
+       <width>131</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Export As Excel</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
