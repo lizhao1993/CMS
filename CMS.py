@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\GitHub\CMS\CMS.ui'
+# Form implementation generated from reading ui file 'CMS.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(710, 445)
+        Form.resize(710, 500)
         self.tabWidget = QtWidgets.QTabWidget(Form)
         self.tabWidget.setGeometry(QtCore.QRect(0, 0, 681, 461))
         self.tabWidget.setObjectName("tabWidget")
@@ -50,9 +50,9 @@ class Ui_Form(object):
         self.tableView = QtWidgets.QTableView(self.Roster)
         self.tableView.setGeometry(QtCore.QRect(30, 20, 301, 381))
         self.tableView.setObjectName("tableView")
-        self.toolButton = QtWidgets.QToolButton(self.Roster)
-        self.toolButton.setGeometry(QtCore.QRect(380, 130, 121, 51))
-        self.toolButton.setObjectName("toolButton")
+        self.pushButton = QtWidgets.QPushButton(self.Roster)
+        self.pushButton.setGeometry(QtCore.QRect(380, 130, 121, 51))
+        self.pushButton.setObjectName("pushButton")
         self.tabWidget.addTab(self.Roster, "")
         self.Projects = QtWidgets.QWidget()
         self.Projects.setObjectName("Projects")
@@ -80,9 +80,9 @@ class Ui_Form(object):
         self.label_2 = QtWidgets.QLabel(self.Projects)
         self.label_2.setGeometry(QtCore.QRect(370, 300, 121, 21))
         self.label_2.setObjectName("label_2")
-        self.pushButton = QtWidgets.QPushButton(self.Projects)
-        self.pushButton.setGeometry(QtCore.QRect(540, 330, 75, 23))
-        self.pushButton.setObjectName("pushButton")
+        self.pushButton1 = QtWidgets.QPushButton(self.Projects)
+        self.pushButton1.setGeometry(QtCore.QRect(540, 330, 75, 23))
+        self.pushButton1.setObjectName("pushButton1")
         self.groupBox = QtWidgets.QGroupBox(self.Projects)
         self.groupBox.setGeometry(QtCore.QRect(350, 80, 291, 291))
         self.groupBox.setObjectName("groupBox")
@@ -103,7 +103,7 @@ class Ui_Form(object):
         self.tabWidget.addTab(self.Export, "")
 
         self.retranslateUi(Form)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(1)
         self.tabWidget_2.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(Form)
 
@@ -133,15 +133,25 @@ class Ui_Form(object):
         item = self.tableWidget.horizontalHeaderItem(8)
         item.setText(_translate("Form", "Total Grade"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Attendance), _translate("Form", "Attendance"))
-        self.toolButton.setText(_translate("Form", "Import From Excel"))
+        self.pushButton.setText(_translate("Form", "Import From Excel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Roster), _translate("Form", "Roster"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab), _translate("Form", "Project 1"))
         self.tabWidget_2.setTabText(self.tabWidget_2.indexOf(self.tab_2), _translate("Form", "Project 2"))
         self.label.setText(_translate("Form", "Choose Project"))
         self.label_2.setText(_translate("Form", "Choose Weekly Points"))
-        self.pushButton.setText(_translate("Form", "Submit"))
+        self.pushButton1.setText(_translate("Form", "Submit"))
         self.groupBox.setTitle(_translate("Form", "Give Feedback"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Projects), _translate("Form", "Projects"))
         self.exportbutton.setText(_translate("Form", "Export As Excel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Export), _translate("Form", "Export"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    Form = QtWidgets.QWidget()
+    ui = Ui_Form()
+    ui.setupUi(Form)
+    Form.show()
+    sys.exit(app.exec_())
 

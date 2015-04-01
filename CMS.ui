@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>710</width>
-    <height>445</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>2</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="Attendance">
     <attribute name="title">
@@ -109,7 +109,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QToolButton" name="toolButton">
+    <widget class="QPushButton" name="pushButton">
      <property name="geometry">
       <rect>
        <x>380</x>
