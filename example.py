@@ -6,11 +6,8 @@ import sys
 import loadworkbook
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QAction,
-                             QTextEdit)
+from PyQt5.QtWidgets import *
 from CMS1 import Ui_MainWindow
-from PyQt5.QtWidgets import (QMainWindow, QTextEdit, 
-    QAction, QFileDialog, QApplication)
 
 
 app = QApplication(sys.argv)
@@ -24,6 +21,14 @@ def pushButton_Clicked(self):
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
 
+    # Set up the table
+    table = ui.tableWidget
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setHorizontalHeaderItem(1,QTableWidgetItem("hi"))
+    table.setRowCount(len(students))
+    table.setColumnCount(2)
+
+    # TableView needs a model
     model = QStandardItemModel(len(students),3)
     model.setHorizontalHeaderItem(0, QStandardItem("Name"))
     model.setHorizontalHeaderItem(1, QStandardItem("Email"))
@@ -31,12 +36,16 @@ def pushButton_Clicked(self):
     row=0;
     for student in students:
         name = QStandardItem(student[0]+" "+student[1])
+        name1 = QTableWidgetItem(student[0]+" "+student[1])
         email = QStandardItem(student[2])
         units = QStandardItem(str(student[3]))
         model.setItem(row,0,name)
+        table.setItem(row,0,name1)
         model.setItem(row,1,email)
         model.setItem(row,2,units)
         row+=1
+        
+    table.show()
     ui.tableView.setModel(model)
     ui.tableView.resizeColumnToContents(0)
     ui.tableView.resizeColumnToContents(1)

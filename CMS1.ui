@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <property name="tabsClosable">
      <bool>false</bool>
@@ -42,44 +42,21 @@
      <attribute name="title">
       <string>Attendance</string>
      </attribute>
+     <widget class="QTableWidget" name="tableWidget">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>731</width>
+        <height>501</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="Roster">
      <attribute name="title">
       <string>Roster</string>
      </attribute>
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>20</y>
-        <width>301</width>
-        <height>451</height>
-       </rect>
-      </property>
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>299</width>
-         <height>449</height>
-        </rect>
-       </property>
-       <widget class="QTableView" name="tableView">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>211</width>
-          <height>431</height>
-         </rect>
-        </property>
-       </widget>
-      </widget>
-     </widget>
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
@@ -139,6 +116,16 @@
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>20</y>
+        <width>211</width>
+        <height>431</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="Projects">
      <attribute name="title">
@@ -183,7 +170,7 @@
              <x>0</x>
              <y>0</y>
              <width>261</width>
-             <height>247</height>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">

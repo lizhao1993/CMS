@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'CMS.ui'
+# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\GitHub\CMS\CMS.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -144,14 +144,4 @@ class Ui_Form(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Projects), _translate("Form", "Projects"))
         self.exportbutton.setText(_translate("Form", "Export As Excel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Export), _translate("Form", "Export"))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
-    sys.exit(app.exec_())
 
