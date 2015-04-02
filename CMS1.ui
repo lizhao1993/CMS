@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="tabsClosable">
      <bool>false</bool>
@@ -83,10 +83,10 @@
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
-        <x>480</x>
-        <y>90</y>
-        <width>101</width>
-        <height>31</height>
+        <x>360</x>
+        <y>30</y>
+        <width>86</width>
+        <height>23</height>
        </rect>
       </property>
       <property name="palette">
@@ -183,7 +183,7 @@
              <x>0</x>
              <y>0</y>
              <width>261</width>
-             <height>243</height>
+             <height>247</height>
             </rect>
            </property>
            <attribute name="label">
@@ -215,8 +215,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>261</width>
-             <height>243</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -224,11 +224,27 @@
            </attribute>
           </widget>
           <widget class="QWidget" name="page_3">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>100</width>
+             <height>30</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Page</string>
            </attribute>
           </widget>
           <widget class="QWidget" name="page_4">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>100</width>
+             <height>30</height>
+            </rect>
+           </property>
            <attribute name="label">
             <string>Page</string>
            </attribute>
@@ -347,16 +363,6 @@
      </attribute>
     </widget>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>21</height>
-    </rect>
-   </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
