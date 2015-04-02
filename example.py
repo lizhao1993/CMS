@@ -1,6 +1,7 @@
 # last edited 4/2/2015
 # authors: Student CMS team - Neftali Dominguez, Li Zhao, Nicole Chang, Jacob Patton
 
+
 import sys
 import loadworkbook
 from PyQt5.QtCore import *
@@ -8,6 +9,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QFileDialog, QAction,
                              QTextEdit)
 from CMS1 import Ui_MainWindow
+from PyQt5.QtWidgets import (QMainWindow, QTextEdit, 
+    QAction, QFileDialog, QApplication)
 
 
 app = QApplication(sys.argv)
@@ -45,5 +48,4 @@ ui.pushButton.clicked.connect(pushButton_Clicked)
 
 window.show()
 sys.exit(app.exec_())
-
 
