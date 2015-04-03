@@ -6,6 +6,8 @@ import xml.etree.ElementTree as ET
 import xml.etree.cElementTree as ET
 from xml.etree.ElementTree import SubElement, ElementTree
 
+# TODO: write function that finds student and returns the current absences
+
 
 class DataInterface:
     """ This class contains all basic database management functions for Student CMS. When working with this class, it is

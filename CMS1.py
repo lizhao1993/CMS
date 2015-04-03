@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\GitHub\CMS\CMS1.ui'
+# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\Github\CMS\CMS1.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -24,15 +24,18 @@ class Ui_MainWindow(object):
         self.Attendance = QtWidgets.QWidget()
         self.Attendance.setObjectName("Attendance")
         self.tableWidget = QtWidgets.QTableWidget(self.Attendance)
-        self.tableWidget.setGeometry(QtCore.QRect(10, 10, 731, 501))
+        self.tableWidget.setGeometry(QtCore.QRect(10, 10, 571, 501))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
+        self.pushButton_3 = QtWidgets.QPushButton(self.Attendance)
+        self.pushButton_3.setGeometry(QtCore.QRect(630, 50, 101, 31))
+        self.pushButton_3.setObjectName("pushButton_3")
         self.tabWidget.addTab(self.Attendance, "")
         self.Roster = QtWidgets.QWidget()
         self.Roster.setObjectName("Roster")
         self.pushButton = QtWidgets.QPushButton(self.Roster)
-        self.pushButton.setGeometry(QtCore.QRect(360, 30, 86, 23))
+        self.pushButton.setGeometry(QtCore.QRect(540, 40, 86, 23))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 170, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -49,7 +52,7 @@ class Ui_MainWindow(object):
         self.pushButton.setFlat(True)
         self.pushButton.setObjectName("pushButton")
         self.tableView = QtWidgets.QTableView(self.Roster)
-        self.tableView.setGeometry(QtCore.QRect(40, 20, 211, 431))
+        self.tableView.setGeometry(QtCore.QRect(40, 20, 311, 431))
         self.tableView.setObjectName("tableView")
         self.tabWidget.addTab(self.Roster, "")
         self.Projects = QtWidgets.QWidget()
@@ -128,13 +131,14 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.pushButton_3.setText(_translate("MainWindow", "Save Changes"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Attendance), _translate("MainWindow", "Attendance"))
         self.pushButton.setText(_translate("MainWindow", "Import Roster"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Roster), _translate("MainWindow", "Roster"))
