@@ -29,7 +29,7 @@ class DataInterface:
         """ Writes the database to the current folder. If a file name is passed, it will be saved under that name.
         If no name is passed, it will be saved under the default name "database.xml". """
         
-        file = ElementTree(self.data)  # wraps the global varable data (an Element) in an ElementTree instance.
+        file = ElementTree(self.data)  # wraps the global variable data (an Element) in an ElementTree instance.
         file.write(filename)
 
     
