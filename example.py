@@ -4,6 +4,7 @@
 
 import sys
 import loadworkbook
+import DataInterface
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -20,6 +21,7 @@ def pushButton_Clicked(self):
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
+    db = DataInterface.DataInterface()
 
     # Set up the table
     table = ui.tableWidget
@@ -34,25 +36,28 @@ def pushButton_Clicked(self):
     model.setHorizontalHeaderItem(1, QStandardItem("Email"))
     model.setHorizontalHeaderItem(2, QStandardItem("Units"))
     row=0;
+
+    # Add students to tableView and tableWidget
     for student in students:
-        name = QStandardItem(student[0]+" "+student[1])
-        name1 = QTableWidgetItem(student[0]+" "+student[1])
+        prename = student[0]+" "+student[1]
+        db.addStudent(prename)
+        name = QStandardItem(prename)
+        name1 = QTableWidgetItem(prename)
         email = QStandardItem(student[2])
         units = QStandardItem(str(student[3]))
-        model.setItem(row,0,name)
+        
         table.setItem(row,0,name1)
+        model.setItem(row,0,name)
         model.setItem(row,1,email)
         model.setItem(row,2,units)
         row+=1
-        
+
+    # Display the tableWidget and the tableView
     table.show()
     ui.tableView.setModel(model)
-    ui.tableView.resizeColumnToContents(0)
-    ui.tableView.resizeColumnToContents(1)
-    ui.tableView.resizeColumnToContents(2)
+    #db.save()
 
-
-
+# Connects the button to the dialog
 ui.pushButton.clicked.connect(pushButton_Clicked)
 
 window.show()
