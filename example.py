@@ -5,6 +5,7 @@
 import sys
 import loadworkbook
 import DataInterface
+import xml.etree.ElementTree as ET
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
@@ -25,10 +26,10 @@ def pushButton_Clicked(self):
 
     # Set up the table
     table = ui.tableWidget
+    table.setColumnCount(2)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
     table.setHorizontalHeaderItem(1,QTableWidgetItem("hi"))
     table.setRowCount(len(students))
-    table.setColumnCount(2)
 
     # TableView needs a model
     model = QStandardItemModel(len(students),3)
@@ -41,12 +42,15 @@ def pushButton_Clicked(self):
     for student in students:
         prename = student[0]+" "+student[1]
         db.addStudent(prename)
-        name = QStandardItem(prename)
+        
         name1 = QTableWidgetItem(prename)
+        
+        name = QStandardItem(prename)
         email = QStandardItem(student[2])
         units = QStandardItem(str(student[3]))
         
         table.setItem(row,0,name1)
+        
         model.setItem(row,0,name)
         model.setItem(row,1,email)
         model.setItem(row,2,units)
@@ -55,7 +59,8 @@ def pushButton_Clicked(self):
     # Display the tableWidget and the tableView
     table.show()
     ui.tableView.setModel(model)
-    #db.save()
+    
+    db.save()
 
 # Connects the button to the dialog
 ui.pushButton.clicked.connect(pushButton_Clicked)
