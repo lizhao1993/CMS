@@ -138,6 +138,18 @@ class DataInterface:
         student = self.findStudent(name)
         return student.find(header).attrib["info"]
 
+    def stuAbsence(self, name, increment, excused):
+        """  Adds or removes an absence or excused absence  from the given student depending on whether increment is
+        true or false and excused is true or false respectively. This must be called along with the """
+
+        student = self.findStudent(name)
+        category = "Number of Absences"
+
+        if(excused): category = "Number of Excused"
+
+        if(increment): student.find(category).attrib["info"] = student.find(category).attrib["info"] + 1
+        else: student.find(category).attrib["info"] = student.find(category).attrib["info"] - 1
+
     
     def stuAdd(self, header, value=""):
         """ Adds a category with the tag given by the header to all students and adds this category to the list of
