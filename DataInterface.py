@@ -56,13 +56,13 @@ class DataInterface:
         and adding all of their non-default categories to the header list. NOT FOR EXTERNAL USE. """
         
         # creates the list of default categories and the empty header list.
-        deflist = ["ID", "Units", "Number of Absences", "Number of Excused", "In Class", "Flag"]
+        deflist = ["ID", "Units", "Number_of_Absences", "Number_of_Excused", "In_Class", "Flag"]
         headerlist = []
 
         # finds the first non-flagged, non-dropped student and sets the list of their children to catlist.
         stulist = self.data.find("Students").getchildren()
         x = 0
-        while(stulist[x].find("Flag").attrib["info"] == "Yes" or stulist[x].find("In Class").attrib["info"] == "No"):
+        while(stulist[x].find("Flag").attrib["info"] == "Yes" or stulist[x].find("In_Class").attrib["info"] == "No"):
             x += 1
         catlist = stulist[x].getchildren()
 
@@ -82,11 +82,11 @@ class DataInterface:
         student = SubElement(students, "Name") # adds a new subelement with the student's name as a tag.
         student.attrib["info"] = name
         # adds all default student data categories.
-        SubElement(student, "ID")
-        SubElement(student, "Units")
-        SubElement(student, "Number of Absences")
-        SubElement(student, "Number of Excused")
-        SubElement(student, "In Class").attrib["info"] = "Yes"
+        SubElement(student, "ID").attrib["info"]=""
+        SubElement(student, "Units").attrib["info"]=""
+        SubElement(student, "Number_of_Absences").attrib["info"]="0"
+        SubElement(student, "Number_of_Excused").attrib["info"]="0"
+        SubElement(student, "In_Class").attrib["info"] = "Yes"
         SubElement(student, "Flag").attrib["info"] = "No"
 
         # adds all additional data categories.
@@ -97,8 +97,8 @@ class DataInterface:
     def findStudent(self, name):
         """ Returns the student Element with the tag of the given name. NOT FOR EXTERNAL USE. """
         
-        students = self.data.find("Students")
-        return students.find(name)
+        path = ".//Name[@info='"+name+"']"
+        return self.data.find(path)
 
     
     def stuSort(self, vlist):
@@ -109,7 +109,7 @@ class DataInterface:
         v2list = []
 
         for x in range(0, len(vlist)):
-            if(vlist[x].find("Flag").attrib["info"] == "No" or vlist[x].find("In Class").attrib["info"] == "Yes"):
+            if(vlist[x].find("Flag").attrib["info"] == "No" or vlist[x].find("In_Class").attrib["info"] == "Yes"):
                    nlist.append(vlist[x].tag)
         nlist.sort()
 
@@ -123,7 +123,7 @@ class DataInterface:
         """ Sets the InClass attribute to indicate that the student has dropped. """
         
         student = self.findStudent(name)
-        student.find("In Class").attrib["info"] = "No"
+        student.find("In_Class").attrib["info"] = "No"
 
     
     def stuMod(self, name, header, value):
@@ -138,17 +138,23 @@ class DataInterface:
         student = self.findStudent(name)
         return student.find(header).attrib["info"]
 
-    def stuAbsence(self, name, increment, excused):
+    def stuAbsence(self, name, increment=1, excused=0):
         """  Adds or removes an absence or excused absence  from the given student depending on whether increment is
         true or false and excused is true or false respectively. This must be called along with the """
 
         student = self.findStudent(name)
-        category = "Number of Absences"
+        category = "Number_of_Absences"
 
-        if(excused): category = "Number of Excused"
+        if(excused): category = "Number_of_Excused"
 
-        if(increment): student.find(category).attrib["info"] = student.find(category).attrib["info"] + 1
-        else: student.find(category).attrib["info"] = student.find(category).attrib["info"] - 1
+        # get Number_of_Absences and convert to int so we can increment
+        numabs = int(student.find(category).attrib["info"])
+        
+        if(increment):
+            numabs+=1
+            student.find(category).attrib["info"] =str(numabs)
+##        else:
+##            student.find(category).attrib["info"] = student.find(category).attrib["info"] - 1
 
     
     def stuAdd(self, header, value=""):
@@ -215,7 +221,7 @@ class DataInterface:
         
         student = self.findStudent(name)
         catlist = student.getchildren()
-        stdlist = ["ID", "Units", "Number of Absences", "Number of Excused", "In Class", "Flag"]
+        stdlist = ["ID", "Units", "Number_of_Absences", "Number_of_Excused", "In_Class", "Flag"]
 
         if(len(catlist) == (len(self.headerList)+6)): return True
 

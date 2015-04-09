@@ -1,7 +1,6 @@
 # last edited 4/2/2015
 # authors: Student CMS team - Neftali Dominguez, Li Zhao, Nicole Chang, Jacob Patton
 
-
 import sys
 import loadworkbook
 import DataInterface
@@ -12,12 +11,6 @@ from PyQt5.QtWidgets import *
 from CMS1 import Ui_MainWindow
 
 
-app = QApplication(sys.argv)
-window = QMainWindow()
-ui = Ui_MainWindow()
-ui.setupUi(window)
-
-db = DataInterface.DataInterface()
 
 def populateTableView(model,students):
     """ populateTableView takes in a nested list of students with their info,
@@ -45,8 +38,8 @@ def populateTableView(model,students):
     return model
 
 def populateTableWidget(students):
-    """ populateTableWidget takes in a nested list of students with their info,
-    the table we want to populate, and adds data to the TableWidget """
+    """ populateTableWidget takes in a nested list of students with their info
+    and adds data to the (default) TableWidget """
     
     table = ui.tableWidget
     table.setColumnCount(2)
@@ -57,10 +50,12 @@ def populateTableWidget(students):
 
     # Add students to tableView and tableWidget
     for student in students:
-        prename = student[0]+" "+student[1]
-        name1 = QTableWidgetItem(prename)
+        preset = QTableWidgetItem("Y")
+        name1 = QTableWidgetItem(student[0]+" "+student[1])
         table.setItem(row,0,name1)
+        table.setItem(row,1,preset)
         row+=1
+
 
     return table
 
@@ -88,29 +83,31 @@ def pushButton_Clicked(self):
     ui.tableView.setModel(model)
     
     db.save()
-
-def saveAttendanceChanges(self):
-    table = ui.tableWidget
-    rows = table.rowCount()
-    cols = table.columnCount()
-
-    for row in range(0,rows):
-        for col in range(0,cols):
-            if table.cellChanged(row,col):
-                #get value with currentItem
-                #use currentRow to get student's name
-                #find student in DB
-                #if absent, add absence to count in DB
-                print("hi")
-                pass
-                
-                
     
+def cellChanged(self):
+    col = ui.tableWidget.currentColumn()
+    row = ui.tableWidget.currentRow()
+    
+    #get student's name
+    
+    name = ui.tableWidget.item(row,0)
+    if name:
+        name = name.text()
+        print(name)
+        db.stuAbsence(name)
+        db.save()                
 
 # Connects the button to the dialog
-ui.pushButton.clicked.connect(pushButton_Clicked)
-ui.pushButton_3.clicked.connect(saveAttendanceChanges)
+if __name__=="__main__":
+    app = QApplication(sys.argv)
+    window = QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(window)
 
-window.show()
-sys.exit(app.exec_())
+    db = DataInterface.DataInterface()
+    ui.pushButton.clicked.connect(pushButton_Clicked)
+    ui.tableWidget.cellChanged.connect(cellChanged)
+
+    window.show()
+    sys.exit(app.exec_())
 
