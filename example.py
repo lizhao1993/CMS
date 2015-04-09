@@ -35,17 +35,17 @@ def populateTableView(model,students):
     return model
 
 def populateAttendance(students):
-    """ populateTableWidget takes in a nested list of students with their info
-    and adds data to the (default) TableWidget """
+    """ populateattendanceTable takes in a nested list of students with their info
+    and adds data to the (default) attendanceTable """
     
-    table = ui.tableWidget
+    table = ui.attendanceTable
     table.setColumnCount(2)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
     table.setHorizontalHeaderItem(1,QTableWidgetItem("hi"))
     table.setRowCount(len(students))
     row=0;
 
-    # Add students to tableWidget
+    # Add students to attendanceTable
     for student in students:
         preset = QTableWidgetItem("Y")
         name1 = QTableWidgetItem(student[0]+" "+student[1])
@@ -55,7 +55,7 @@ def populateAttendance(students):
     return table
 
 def populateGrades(students):
-    table = ui.tableWidget_2
+    table = ui.gradesTable
     table.setColumnCount(1)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
     table.setRowCount(len(students))
@@ -67,7 +67,7 @@ def populateGrades(students):
         row+=1
     return table
 
-def pushButton_Clicked(self):
+def getRoster(self):
     
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
@@ -87,40 +87,56 @@ def pushButton_Clicked(self):
     model = populateTableView(model,students)
     
 
-    # Display the tableWidget and the tableView
+    # Display the attendanceTable and the tableView
     table.show()
     gradesTable.show()
-    ui.tableView.setModel(model)
+    ui.rosterView.setModel(model)
     
     db.save()
     
-def cellChanged(self):
-    col = ui.tableWidget.currentColumn()
-    row = ui.tableWidget.currentRow()
+def cellChangedAttendance(self):
+    col = ui.attendanceTable.currentColumn()
+    row = ui.attendanceTable.currentRow()
     
     #get student's name
+    if col!=0:
+        name = ui.attendanceTable.item(row,0)
+        if name:
+            name = name.text()
+            db.stuAbsence(name)
+            db.save()
+
+def cellChangedGrades(self):
+    col = ui.gradesTable.currentColumn()
+    row = ui.gradesTable.currentRow()
     
-    name = ui.tableWidget.item(row,0)
-    if name:
-        name = name.text()
-        print(name)
-        db.stuAbsence(name)
-        db.save()
-    
+    #get student's name
+    if col!=0:
+        name = ui.gradesTable.item(row,0)
+        if name:
+            name = name.text()
+            header = ui.gradesTable.horizontalHeaderItem(col)
+            if header:
+                header = header.text()
+                item = ui.gradesTable.currentItem()
+                if item:
+                    item = item.text()
+                    db.stuMod(name,header,item)
+                    db.save()
 
 def showDialog(self):
     inputDialog = QInputDialog()
     text, ok = inputDialog.getText(ui.add_assignment,"Add Assignment",
                                    "Enter Assignment Name:")
     if ok:
-        cols = ui.tableWidget_2.columnCount()
-        ui.tableWidget_2.insertColumn(cols)        
-        ui.tableWidget_2.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
+        cols = ui.gradesTable.columnCount()
+        ui.gradesTable.insertColumn(cols)        
+        ui.gradesTable.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
 
-        #add rows for the students
-        if ui.tableWidget.columnCount()>0:
-            rows = ui.tableWidget.rowCount()
-            ui.tableWidget_2.setRowCount(rows)
+        # gets number of students if it's known
+        if ui.attendanceTable.columnCount()>0:
+            rows = ui.attendanceTable.rowCount()
+            ui.gradesTable.setRowCount(rows)
             
         #add the homework name to the database for all students
         db.stuAdd(text)
@@ -137,9 +153,10 @@ if __name__=="__main__":
 
     db = DataInterface.DataInterface()
 
-    ui.pushButton.clicked.connect(pushButton_Clicked)
+    ui.pushButton.clicked.connect(getRoster)
     ui.add_assignment.clicked.connect(showDialog)
-    ui.tableWidget.cellChanged.connect(cellChanged)
+    ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
+    ui.gradesTable.cellChanged.connect(cellChangedGrades)
 
     window.show()
     sys.exit(app.exec_())

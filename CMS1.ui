@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>2</number>
     </property>
     <property name="tabsClosable">
      <bool>false</bool>
@@ -42,7 +42,7 @@
      <attribute name="title">
       <string>Attendance</string>
      </attribute>
-     <widget class="QTableWidget" name="tableWidget">
+     <widget class="QTableWidget" name="attendanceTable">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -57,7 +57,7 @@
      <attribute name="title">
       <string>Grades</string>
      </attribute>
-     <widget class="QTableWidget" name="tableWidget_2">
+     <widget class="QTableWidget" name="gradesTable">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -70,8 +70,8 @@
      <widget class="QPushButton" name="add_assignment">
       <property name="geometry">
        <rect>
-        <x>560</x>
-        <y>60</y>
+        <x>520</x>
+        <y>30</y>
         <width>131</width>
         <height>31</height>
        </rect>
@@ -88,10 +88,10 @@
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>40</y>
-        <width>86</width>
-        <height>23</height>
+        <x>520</x>
+        <y>30</y>
+        <width>131</width>
+        <height>31</height>
        </rect>
       </property>
       <property name="palette">
@@ -141,16 +141,16 @@
        <bool>false</bool>
       </property>
       <property name="flat">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
-     <widget class="QTableView" name="tableView">
+     <widget class="QTableView" name="rosterView">
       <property name="geometry">
        <rect>
-        <x>40</x>
-        <y>20</y>
-        <width>311</width>
-        <height>431</height>
+        <x>10</x>
+        <y>10</y>
+        <width>481</width>
+        <height>441</height>
        </rect>
       </property>
      </widget>
@@ -197,8 +197,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>261</width>
+             <height>243</height>
             </rect>
            </property>
            <attribute name="label">
@@ -230,8 +230,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -243,8 +243,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
@@ -256,8 +256,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>98</width>
-             <height>28</height>
+             <width>100</width>
+             <height>30</height>
             </rect>
            </property>
            <attribute name="label">
