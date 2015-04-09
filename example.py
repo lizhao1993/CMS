@@ -55,6 +55,9 @@ def populateAttendance(students):
     return table
 
 def populateGrades(students):
+    """ populateGrades takes in a nested list of students and adds their names
+    to the first column in the grades table """
+    
     table = ui.gradesTable
     table.setColumnCount(1)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
@@ -68,7 +71,9 @@ def populateGrades(students):
     return table
 
 def getRoster(self):
-    
+    """ getRoster is called when the button to import a roster is clicked; it
+    reads the imported excel file into a nested list of students and then
+    populates the roster, attendanceTable, and the gradesTable """
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
