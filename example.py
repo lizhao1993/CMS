@@ -17,12 +17,13 @@ window = QMainWindow()
 ui = Ui_MainWindow()
 ui.setupUi(window)
 
+db = DataInterface.DataInterface()
+
 def pushButton_Clicked(self):
     
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
-    db = DataInterface.DataInterface()
 
     # Set up the table
     table = ui.tableWidget
@@ -62,8 +63,27 @@ def pushButton_Clicked(self):
     
     db.save()
 
+def saveAttendanceChanges(self):
+    table = ui.tableWidget
+    rows = table.rowCount()
+    cols = table.columnCount()
+
+    for row in range(0,rows):
+        for col in range(0,cols):
+            if table.cellChanged(row,col):
+                #get value with currentItem
+                #use currentRow to get student's name
+                #find student in DB
+                #if absent, add absence to count in DB
+                print("hi")
+                pass
+                
+                
+    
+
 # Connects the button to the dialog
 ui.pushButton.clicked.connect(pushButton_Clicked)
+ui.pushButton_3.clicked.connect(saveAttendanceChanges)
 
 window.show()
 sys.exit(app.exec_())

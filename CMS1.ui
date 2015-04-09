@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="tabsClosable">
      <bool>false</bool>
@@ -47,9 +47,22 @@
        <rect>
         <x>10</x>
         <y>10</y>
-        <width>731</width>
+        <width>571</width>
         <height>501</height>
        </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_3">
+      <property name="geometry">
+       <rect>
+        <x>630</x>
+        <y>50</y>
+        <width>101</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Save Changes</string>
       </property>
      </widget>
     </widget>
@@ -60,8 +73,8 @@
      <widget class="QPushButton" name="pushButton">
       <property name="geometry">
        <rect>
-        <x>360</x>
-        <y>30</y>
+        <x>540</x>
+        <y>40</y>
         <width>86</width>
         <height>23</height>
        </rect>
@@ -121,7 +134,7 @@
        <rect>
         <x>40</x>
         <y>20</y>
-        <width>211</width>
+        <width>311</width>
         <height>431</height>
        </rect>
       </property>
