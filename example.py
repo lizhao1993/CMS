@@ -11,6 +11,10 @@ from PyQt5.QtWidgets import *
 from CMS1 import Ui_MainWindow
 
 
+def addColsToGrades():
+    table = ui.tableWidget_2
+    table.setColumnCount(10)
+    table.setRowCount(50)
 
 def populateTableView(model,students):
     """ populateTableView takes in a nested list of students with their info,
@@ -95,7 +99,20 @@ def cellChanged(self):
         name = name.text()
         print(name)
         db.stuAbsence(name)
-        db.save()                
+        db.save()
+
+def showDialog(self):
+
+    #self.le = QLineEdit(self)
+    text, ok = QInputDialog.getText(self, "Add Assignment","Enter Assignment Name:")
+
+    if ok:
+        #self.le.setText(str(text))
+        cols = ui.tableWidget_2.columnCount()
+        ui.tableWidget_2.insertColumn(cols)        
+        table.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
+        
+        
 
 # Connects the button to the dialog
 if __name__=="__main__":
@@ -105,7 +122,10 @@ if __name__=="__main__":
     ui.setupUi(window)
 
     db = DataInterface.DataInterface()
+
+    addColsToGrades()
     ui.pushButton.clicked.connect(pushButton_Clicked)
+    ui.add_assignment.clicked.connect(showDialog)
     ui.tableWidget.cellChanged.connect(cellChanged)
 
     window.show()

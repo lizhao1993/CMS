@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\Github\CMS\CMS.ui'
+# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\GitHub\CMS\CMS.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #

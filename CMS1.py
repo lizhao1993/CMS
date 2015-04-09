@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\Github\CMS\CMS1.ui'
+# Form implementation generated from reading ui file 'C:\Users\Neftali\Documents\GitHub\CMS\CMS1.ui'
 #
 # Created by: PyQt5 UI code generator 5.4.1
 #
@@ -24,14 +24,22 @@ class Ui_MainWindow(object):
         self.Attendance = QtWidgets.QWidget()
         self.Attendance.setObjectName("Attendance")
         self.tableWidget = QtWidgets.QTableWidget(self.Attendance)
-        self.tableWidget.setGeometry(QtCore.QRect(10, 10, 571, 501))
+        self.tableWidget.setGeometry(QtCore.QRect(10, 10, 571, 511))
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
-        self.pushButton_3 = QtWidgets.QPushButton(self.Attendance)
-        self.pushButton_3.setGeometry(QtCore.QRect(630, 50, 101, 31))
-        self.pushButton_3.setObjectName("pushButton_3")
         self.tabWidget.addTab(self.Attendance, "")
+        self.Grades = QtWidgets.QWidget()
+        self.Grades.setObjectName("Grades")
+        self.tableWidget_2 = QtWidgets.QTableWidget(self.Grades)
+        self.tableWidget_2.setGeometry(QtCore.QRect(10, 10, 481, 511))
+        self.tableWidget_2.setObjectName("tableWidget_2")
+        self.tableWidget_2.setColumnCount(0)
+        self.tableWidget_2.setRowCount(0)
+        self.add_assignment = QtWidgets.QPushButton(self.Grades)
+        self.add_assignment.setGeometry(QtCore.QRect(560, 60, 131, 31))
+        self.add_assignment.setObjectName("add_assignment")
+        self.tabWidget.addTab(self.Grades, "")
         self.Roster = QtWidgets.QWidget()
         self.Roster.setObjectName("Roster")
         self.pushButton = QtWidgets.QPushButton(self.Roster)
@@ -70,7 +78,7 @@ class Ui_MainWindow(object):
         self.toolBox = QtWidgets.QToolBox(self.scrollAreaWidgetContents_2)
         self.toolBox.setObjectName("toolBox")
         self.page = QtWidgets.QWidget()
-        self.page.setGeometry(QtCore.QRect(0, 0, 261, 243))
+        self.page.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.page.setObjectName("page")
         self.columnView = QtWidgets.QColumnView(self.page)
         self.columnView.setGeometry(QtCore.QRect(10, 0, 91, 241))
@@ -80,15 +88,15 @@ class Ui_MainWindow(object):
         self.tableView_2.setObjectName("tableView_2")
         self.toolBox.addItem(self.page, "")
         self.page_2 = QtWidgets.QWidget()
-        self.page_2.setGeometry(QtCore.QRect(0, 0, 100, 30))
+        self.page_2.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.page_2.setObjectName("page_2")
         self.toolBox.addItem(self.page_2, "")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 100, 30))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
         self.page_4 = QtWidgets.QWidget()
-        self.page_4.setGeometry(QtCore.QRect(0, 0, 100, 30))
+        self.page_4.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.page_4.setObjectName("page_4")
         self.toolBox.addItem(self.page_4, "")
         self.verticalLayout.addWidget(self.toolBox)
@@ -131,15 +139,16 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.pushButton_3.setText(_translate("MainWindow", "Save Changes"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Attendance), _translate("MainWindow", "Attendance"))
+        self.add_assignment.setText(_translate("MainWindow", "Add Assignment"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Grades), _translate("MainWindow", "Grades"))
         self.pushButton.setText(_translate("MainWindow", "Import Roster"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Roster), _translate("MainWindow", "Roster"))
         self.toolBox.setItemText(self.toolBox.indexOf(self.page), _translate("MainWindow", "Page 1"))
