@@ -74,6 +74,7 @@ def getRoster(self):
     """ getRoster is called when the button to import a roster is clicked; it
     reads the imported excel file into a nested list of students and then
     populates the roster, attendanceTable, and the gradesTable """
+    
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
@@ -91,7 +92,6 @@ def getRoster(self):
     # Add students to tableView
     model = populateTableView(model,students)
     
-
     # Display the attendanceTable and the tableView
     table.show()
     gradesTable.show()
