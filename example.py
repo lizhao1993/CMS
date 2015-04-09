@@ -10,12 +10,6 @@ from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from CMS1 import Ui_MainWindow
 
-
-def addColsToGrades():
-    table = ui.tableWidget_2
-    table.setColumnCount(10)
-    table.setRowCount(50)
-
 def populateTableView(model,students):
     """ populateTableView takes in a nested list of students with their info,
     a model (standardItemModel), and adds data to the TableView; it then
@@ -38,10 +32,9 @@ def populateTableView(model,students):
         model.setItem(row,1,email)
         model.setItem(row,2,units)
         row+=1
-
     return model
 
-def populateTableWidget(students):
+def populateAttendance(students):
     """ populateTableWidget takes in a nested list of students with their info
     and adds data to the (default) TableWidget """
     
@@ -52,15 +45,26 @@ def populateTableWidget(students):
     table.setRowCount(len(students))
     row=0;
 
-    # Add students to tableView and tableWidget
+    # Add students to tableWidget
     for student in students:
         preset = QTableWidgetItem("Y")
         name1 = QTableWidgetItem(student[0]+" "+student[1])
         table.setItem(row,0,name1)
         table.setItem(row,1,preset)
         row+=1
+    return table
 
+def populateGrades(students):
+    table = ui.tableWidget_2
+    table.setColumnCount(1)
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setRowCount(len(students))
+    row=0;
 
+    for student in students:
+        name1 = QTableWidgetItem(student[0]+" "+student[1])
+        table.setItem(row,0,name1)
+        row+=1
     return table
 
 def pushButton_Clicked(self):
@@ -70,7 +74,8 @@ def pushButton_Clicked(self):
     students = loadworkbook.getStudentsFromWorkbook(filename)
 
     # Add students to the table Widget
-    table = populateTableWidget(students)
+    table = populateAttendance(students)
+    gradesTable = populateGrades(students)
 
     # TableView needs a model
     model = QStandardItemModel(len(students),3)
@@ -84,6 +89,7 @@ def pushButton_Clicked(self):
 
     # Display the tableWidget and the tableView
     table.show()
+    gradesTable.show()
     ui.tableView.setModel(model)
     
     db.save()
@@ -100,21 +106,29 @@ def cellChanged(self):
         print(name)
         db.stuAbsence(name)
         db.save()
+    
 
 def showDialog(self):
-
-    #self.le = QLineEdit(self)
-    text, ok = QInputDialog.getText(self, "Add Assignment","Enter Assignment Name:")
-
+    inputDialog = QInputDialog()
+    text, ok = inputDialog.getText(ui.add_assignment,"Add Assignment",
+                                   "Enter Assignment Name:")
     if ok:
-        #self.le.setText(str(text))
         cols = ui.tableWidget_2.columnCount()
         ui.tableWidget_2.insertColumn(cols)        
-        table.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
-        
-        
+        ui.tableWidget_2.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
 
-# Connects the button to the dialog
+        #add rows for the students
+        if ui.tableWidget.columnCount()>0:
+            rows = ui.tableWidget.rowCount()
+            ui.tableWidget_2.setRowCount(rows)
+            
+        #add the homework name to the database for all students
+        db.stuAdd(text)
+        db.save()
+            
+            
+        
+    
 if __name__=="__main__":
     app = QApplication(sys.argv)
     window = QMainWindow()
@@ -123,7 +137,6 @@ if __name__=="__main__":
 
     db = DataInterface.DataInterface()
 
-    addColsToGrades()
     ui.pushButton.clicked.connect(pushButton_Clicked)
     ui.add_assignment.clicked.connect(showDialog)
     ui.tableWidget.cellChanged.connect(cellChanged)
