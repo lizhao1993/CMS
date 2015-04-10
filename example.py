@@ -9,6 +9,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from CMS1 import Ui_MainWindow
+import datetime
+from datetime import date
 
 def populateTableView(model,students):
     """ populateTableView takes in a nested list of students with their info,
@@ -21,27 +23,32 @@ def populateTableView(model,students):
 
     # Add students to tableView
     for student in students:
-        prename = student[0]+" "+student[1]
-        db.addStudent(prename)
-        
-        name = QStandardItem(prename)
-        email = QStandardItem(student[2])
-        units = QStandardItem(str(student[3]))
-        
-        model.setItem(row,0,name)
-        model.setItem(row,1,email)
-        model.setItem(row,2,units)
+        name = student[0]+" "+student[1]
+        email = student[2]
+        units = str(student[3])
+        db.addStudent(name)
+        db.stuMod(name,"Email",email)
+        db.stuMod(name,"Units",units)
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(email))
+        model.setItem(row,2,QStandardItem(units))
         row+=1
+        
+    db.save()
     return model
 
 def populateAttendance(students):
     """ populateattendanceTable takes in a nested list of students with their info
-    and adds data to the (default) attendanceTable """
+    and adds data to the (default) attendanceTable; it is called when a new
+    roster is uploaded """
     
     table = ui.attendanceTable
     table.setColumnCount(2)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    table.setHorizontalHeaderItem(1,QTableWidgetItem("hi"))
+    today = date.today()
+    todaysDate = today.strftime("%m/%d/%y")
+    db.addDate(todaysDate) 
+    table.setHorizontalHeaderItem(1,QTableWidgetItem(todaysDate))
     table.setRowCount(len(students))
     row=0;
 
@@ -52,11 +59,14 @@ def populateAttendance(students):
         table.setItem(row,0,name1)
         table.setItem(row,1,preset)
         row+=1
+        
+    db.save()
     return table
 
 def populateGrades(students):
     """ populateGrades takes in a nested list of students and adds their names
-    to the first column in the grades table """
+    to the first column in the grades table; it is called when a new roster
+    is uploaded """
     
     table = ui.gradesTable
     table.setColumnCount(1)
@@ -145,7 +155,73 @@ def showDialog(self):
             
         #add the homework name to the database for all students
         db.stuAdd(text)
+        db.addAssignment(text)
         db.save()
+        
+def populateRosterFromDB(model,names):
+    emails = db.stuMassCall("Email")
+    units = db.stuMassCall("Units")
+
+    for row in range(0,len(names)):
+        model.setItem(row,0,QStandardItem(names[row]))
+        model.setItem(row,1,QStandardItem(emails[row]))
+        model.setItem(row,2,QStandardItem(units[row]))
+    
+
+def populateAttendanceFromDB(names):
+    table = ui.attendanceTable
+    today = datetime.date.today()
+    todaysDate = today.strftime("%m/%d/%y")
+    print(todaysDate)
+    db.addDate(todaysDate)
+    dates = db.data.findall("Date")
+    
+    table.setColumnCount(len(dates)+1)
+    table.setRowCount(len(names))
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setHorizontalHeaderItem(1,QTableWidgetItem(todaysDate))
+    preset = QTableWidgetItem("Y")
+    row=0
+    cols = table.columnCount()-1
+
+    # Add students to attendanceTable
+    for student in names:
+        name = names[row]
+        col=cols
+        table.setItem(row,0,QTableWidgetItem(name))
+        for date in dates:
+            date = date.attrib["info"]
+            table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
+            table.setItem(row,col,preset)
+            col-=1
+        row+=1
+    db.save()
+    return table
+
+
+def populateGradesFromDB(names):
+    """ populateGrades takes in a nested list of students and adds their names
+    to the first column in the grades table """
+    
+    table = ui.gradesTable
+    assignments = db.data.findall("Homework")
+    table.setColumnCount(len(assignments)+1)
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setRowCount(len(names))
+    row=0
+
+    for student in names:
+        name = names[row] #there are row students/names
+        table.setItem(row,0,QTableWidgetItem(name))
+        col=1
+        for hw in assignments:
+            hwName = hw.attrib["info"]
+            table.setHorizontalHeaderItem(col,QTableWidgetItem(hwName))
+            grade = db.stuCall(name,hwName)
+            table.setItem(row,col,QTableWidgetItem(grade))
+            col+=1
+        row+=1
+    return table
             
             
         
@@ -156,7 +232,23 @@ if __name__=="__main__":
     ui = Ui_MainWindow()
     ui.setupUi(window)
 
-    db = DataInterface.DataInterface()
+    filename = "database.xml"
+
+    if filename:
+        db = DataInterface.DataInterface(filename)
+        names = db.stuMassCall("Name")
+        model = QStandardItemModel(len(names),3)
+        model.setHorizontalHeaderItem(0, QStandardItem("Name"))
+        model.setHorizontalHeaderItem(1, QStandardItem("Email"))
+        model.setHorizontalHeaderItem(2, QStandardItem("Units"))
+        
+        populateRosterFromDB(model,names)
+        ui.rosterView.setModel(model)
+        
+        attendanceTable = populateAttendanceFromDB(names)
+        gradesTable = populateGradesFromDB(names)
+    else:
+        db = DataInterface.DataInterface()
 
     ui.pushButton.clicked.connect(getRoster)
     ui.add_assignment.clicked.connect(showDialog)

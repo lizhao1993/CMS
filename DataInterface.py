@@ -61,6 +61,7 @@ class DataInterface:
         root.attrib["semester"] = semester
 
         SubElement(root, "Students")
+        SubElement(root, "Assignments")
         # adds the three SubElements of the Gradebook.
         SubElement(root, "Groups")
         SubElement(root, "Dates")
@@ -76,12 +77,12 @@ class DataInterface:
         
         # creates the list of default categories and the empty header
         # list.
-        deflist = ["ID", "Units", "Number_of_Absences",
+        deflist = ["Name","Email", "Units", "Number_of_Absences",
                    "Number_of_Excused", "In_Class", "Flag"]
         headerlist = []
 
         # finds the first non-flagged, non-dropped student and sets
-        the list of their children to catlist.
+        # the list of their children to catlist.
         stulist = self.data.find("Students").getchildren()
         x = 0
         while(stulist[x].find("Flag").attrib["info"] == "Yes"
@@ -111,7 +112,7 @@ class DataInterface:
         # adds a new subelement with the student's name as a tag.
         student.attrib["info"] = name
         # adds all default student data categories.
-        SubElement(student, "ID").attrib["info"]=""
+        SubElement(student, "Email").attrib["info"]=""
         SubElement(student, "Units").attrib["info"]=""
         SubElement(student, "Number_of_Absences").attrib["info"]="0"
         SubElement(student, "Number_of_Excused").attrib["info"]="0"
@@ -121,6 +122,16 @@ class DataInterface:
         # adds all additional data categories.
         for x in range(0, len(self.headerList)):
             SubElement(student, self.headerList[x])
+
+    def addAssignment(self, hwName):
+        assignments = self.data.find("Assignments")
+        assignment = SubElement(assignments, "Homework")
+        assignment.attrib["info"] = hwName
+
+    def addDate(self, date):
+        dates = self.data.find("Dates")
+        date = SubElement(dates, "Date")
+        date.attrib["info"] = date
 
     
     def findStudent(self, name):
@@ -146,7 +157,7 @@ class DataInterface:
         nlist.sort()
 
         for x in range(0, len(nlist)):
-            v2list.append(self.findStudent(nlist))
+            v2list.append(self.findStudent(nlist[x]))
 
         return v2list
 
@@ -167,7 +178,7 @@ class DataInterface:
         student.find(header).attrib["info"] = value
 
     def stuCall(self, name, header):
-        """ Modifies the attribute of the given header category within
+        """ Gets the attribute of the given header category within
         the given student element. """
         
         student = self.findStudent(name)
@@ -247,17 +258,20 @@ class DataInterface:
         list is in alphabetical order and only includes non-dropped,
         non-flagged students. If the given
         header is not the tag of a category, then the function will
-        return None. """
+        return an empty string. """
+
+        path = ".//"+header+""
+        students = self.data.findall(path)
         
-        slist = self.data.find("Students").getchildren()
-        slist = self.stuSort(slist)
         vlist = []
+        deflist = ["Name","Email", "Units", "Number_of_Absences",
+                   "Number_of_Excused", "In_Class", "Flag"]
+        headers = deflist+self.headerList
 
-        if(header not in self.headerList): return ""
-
-        for x in range(0, len(slist)):
-            vlist.append(slist[x].find(header).attrib["info"])
-
+        if(header not in headers):
+            return ""
+        for x in range(0, len(students)):
+            vlist.append(students[x].attrib["info"])
         return vlist
 
     
@@ -268,7 +282,7 @@ class DataInterface:
         
         student = self.findStudent(name)
         catlist = student.getchildren()
-        stdlist = ["ID", "Units", "Number_of_Absences",
+        stdlist = ["Name","Email", "Units", "Number_of_Absences",
                    "Number_of_Excused", "In_Class", "Flag"]
 
         if(len(catlist) == (len(self.headerList)+6)): return True
@@ -298,6 +312,8 @@ class DataInterface:
             else: SubElement(stulist[x], name)
 
         return True
+
+
 
 
 
