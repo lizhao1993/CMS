@@ -43,24 +43,17 @@ def populateAttendance(students):
     roster is uploaded """
     
     table = ui.attendanceTable
-    table.setColumnCount(2)
+    table.setColumnCount(1)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    today = date.today()
-    todaysDate = today.strftime("%m/%d/%y")
-    db.addDate(todaysDate) 
-    table.setHorizontalHeaderItem(1,QTableWidgetItem(todaysDate))
     table.setRowCount(len(students))
     row=0;
 
     # Add students to attendanceTable
     for student in students:
-        preset = QTableWidgetItem("Y")
         name1 = QTableWidgetItem(student[0]+" "+student[1])
         table.setItem(row,0,name1)
-        table.setItem(row,1,preset)
         row+=1
         
-    db.save()
     return table
 
 def populateGrades(students):
@@ -147,16 +140,63 @@ def showDialog(self):
         cols = ui.gradesTable.columnCount()
         ui.gradesTable.insertColumn(cols)        
         ui.gradesTable.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
-
-        # gets number of students if it's known
-        if ui.attendanceTable.columnCount()>0:
-            rows = ui.attendanceTable.rowCount()
-            ui.gradesTable.setRowCount(rows)
             
         #add the homework name to the database for all students
         db.stuAdd(text)
         db.addAssignment(text)
         db.save()
+
+
+def addNewProject(self):
+    dialog = QDialog()
+    form = QFormLayout(dialog)
+
+    form.addRow(QLabel("Enter project name and students, separated with a comma."))
+    fields = []
+    le = QLineEdit(dialog)
+    form.addRow("Project Name",le)
+    le2 = QLineEdit(dialog)
+    form.addRow("Student Names",le2)
+    fields.append(le)
+    fields.append(le2)
+
+    buttonBox = QDialogButtonBox(dialog)
+    form.addRow(bttnbox)
+    QObject.connect(buttonBox, accepted(), dialog, accept())
+    QObject.connect(buttonBox, rejected(), dialog, reject())
+
+    if ok:
+        projName = fields[0].text()
+        numPages = ui.toolbox.count()
+        ui.page = QtWidgets.QWidget()
+        ui.page.setGeometry(QtCore.QRect(0,0,100,30))
+        ui.page.setObjectName(projName)
+        
+        ui.studentInProject = QtWidgets.QTableView(self.page)
+        ui.studentInProject.setGeometry(QtCore.QRect(0, 0, 261, 141))
+        ui.studentInProject.setObjectName("stuInProject_"+str(numPages))
+        ui.projectFeedback = QtWidgets.QTableView(self.page)
+        ui.projectFeedback.setGeometry(QtCore.QRect(0, 150, 261, 151))
+        ui.projectFeedback.setObjectName("projFeedback_"+str(numPages))
+        
+        ui.toolbox.addItem(ui.page,"")
+        
+
+        
+def addTodaysDate(self):
+    today = date.today()
+    today = today.strftime("%m/%d/%y")
+    db.addDate(today)
+    db.save()
+    
+    ui.attendanceTable.insertColumn(1)
+    ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
+    
+    rows = ui.attendanceTable.rowCount()
+    preset = QTableWidgetItem("Y")
+    for i in range(0,rows):
+        ui.attendanceTable.setItem(i,1,preset)
+        
         
 def populateRosterFromDB(model,names):
     emails = db.stuMassCall("Email")
@@ -170,32 +210,24 @@ def populateRosterFromDB(model,names):
 
 def populateAttendanceFromDB(names):
     table = ui.attendanceTable
-    today = datetime.date.today()
-    todaysDate = today.strftime("%m/%d/%y")
-    print(todaysDate)
-    db.addDate(todaysDate)
-    dates = db.data.findall("Date")
+    dates = db.findDates()
     
     table.setColumnCount(len(dates)+1)
     table.setRowCount(len(names))
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    table.setHorizontalHeaderItem(1,QTableWidgetItem(todaysDate))
     preset = QTableWidgetItem("Y")
     row=0
     cols = table.columnCount()-1
 
     # Add students to attendanceTable
-    for student in names:
-        name = names[row]
+    for date in dates:
         col=cols
-        table.setItem(row,0,QTableWidgetItem(name))
-        for date in dates:
-            date = date.attrib["info"]
-            table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
+        table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
+        for student in names:
+            table.setItem(row,0,QTableWidgetItem(student))
             table.setItem(row,col,preset)
-            col-=1
-        row+=1
-    db.save()
+            row+=1
+        col=col-1
     return table
 
 
@@ -204,7 +236,7 @@ def populateGradesFromDB(names):
     to the first column in the grades table """
     
     table = ui.gradesTable
-    assignments = db.data.findall("Homework")
+    assignments = db.findHW()
     table.setColumnCount(len(assignments)+1)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
     table.setRowCount(len(names))
@@ -215,9 +247,8 @@ def populateGradesFromDB(names):
         table.setItem(row,0,QTableWidgetItem(name))
         col=1
         for hw in assignments:
-            hwName = hw.attrib["info"]
-            table.setHorizontalHeaderItem(col,QTableWidgetItem(hwName))
-            grade = db.stuCall(name,hwName)
+            table.setHorizontalHeaderItem(col,QTableWidgetItem(hw))
+            grade = db.stuCall(name,hw)
             table.setItem(row,col,QTableWidgetItem(grade))
             col+=1
         row+=1
@@ -252,6 +283,8 @@ if __name__=="__main__":
 
     ui.pushButton.clicked.connect(getRoster)
     ui.add_assignment.clicked.connect(showDialog)
+    ui.addProjectBttn.clicked.connect(addNewProject)
+    ui.addDateButton.clicked.connect(addTodaysDate)
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
     ui.gradesTable.cellChanged.connect(cellChangedGrades)
 

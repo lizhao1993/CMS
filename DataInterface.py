@@ -128,10 +128,10 @@ class DataInterface:
         assignment = SubElement(assignments, "Homework")
         assignment.attrib["info"] = hwName
 
-    def addDate(self, date):
+    def addDate(self, today):
         dates = self.data.find("Dates")
-        date = SubElement(dates, "Date")
-        date.attrib["info"] = date
+        ddate = SubElement(dates, "Date")
+        ddate.attrib["info"] = today
 
     
     def findStudent(self, name):
@@ -217,10 +217,7 @@ class DataInterface:
         clist = students.getchildren()
 
         for x in range(0, len(clist)):
-            if (value != ""):
-                SubElement(clist[x], header).attrib["info"] = value
-            else:
-                SubElement(clist[x], header)
+            SubElement(clist[x], header).attrib["info"] = value
 
      
     def stuQuery(self, header):
@@ -250,6 +247,22 @@ class DataInterface:
             slist[x].find(header).attrib["info"] = vlist[x]
 
         return True
+
+    def findDates(self):
+        dates = self.data.findall(".//Date")
+        dateNames = []
+
+        for x in range(0,len(dates)):
+            dateNames.append(dates[x].attrib["info"])
+        return dateNames
+
+    def findHW(self):
+        assignments = self.data.findall(".//Homework")
+        hwNames = []
+
+        for x in range(0,len(assignments)):
+            hwNames.append(assignments[x].attrib["info"])
+        return hwNames    
 
     
     def stuMassCall(self, header):
