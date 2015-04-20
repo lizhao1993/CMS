@@ -18,6 +18,10 @@ from CMS1 import Ui_MainWindow
 import datetime
 from datetime import date
 
+from openpyxl import Workbook
+from openpyxl.compat import range
+from openpyxl.cell import get_column_letter
+
 def populateTableView(model,students):
     """ This is a function for populating the roster;
     populateTableView takes in a nested list of students with their info,
@@ -254,6 +258,26 @@ def populateGradesFromDB(names):
             col+=1
         row+=1
     return table
+
+def export(self, names):
+    """ export saves the student name and final grades into a excel file"""
+    #TODO: we need to write the finalgrade attribute in the database
+    #TODO: currently, this won't include project grades since we don't have project yet
+    finalgrade = db.stuMassCall("Final Grade")
+
+    wb = Workbook()
+    dest_filename = 'Export.xlsx'
+
+    ws1 = wb.active
+    ws1.title = "Grade"
+
+    for row in range(1, len(names)):
+        #TODO: will append work here?
+        ws1.append(names[row])
+        ws1.append(finalgrade[row])
+
+    wb.save(filename = dest_filename)
+    
             
             
         
@@ -288,6 +312,8 @@ if __name__=="__main__":
     ui.addDateButton.clicked.connect(addTodaysDate)
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
     ui.gradesTable.cellChanged.connect(cellChangedGrades)
+    #TODO: name the export button: exportButton
+    #ui.exportButton.clicked.connect(export(names))
 
     ui
 

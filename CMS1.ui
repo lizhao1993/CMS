@@ -33,7 +33,7 @@
      <enum>QTabWidget::Triangular</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>4</number>
     </property>
     <property name="tabsClosable">
      <bool>false</bool>
@@ -210,8 +210,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -243,8 +243,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -256,8 +256,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>100</width>
-             <height>30</height>
+             <width>98</width>
+             <height>28</height>
             </rect>
            </property>
            <attribute name="label">
@@ -270,7 +270,7 @@
              <x>0</x>
              <y>0</y>
              <width>261</width>
-             <height>243</height>
+             <height>247</height>
             </rect>
            </property>
            <attribute name="label">
@@ -394,7 +394,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>PushButton</string>
+       <string>Add Project</string>
       </property>
      </widget>
     </widget>
@@ -402,6 +402,19 @@
      <attribute name="title">
       <string>Export</string>
      </attribute>
+     <widget class="QPushButton" name="export_2">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>110</y>
+        <width>161</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Export to Excel</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
