@@ -249,7 +249,7 @@ def populateGradesFromDB(names):
         row+=1
     return table
 
-def export(self, names):
+def export(names):
     """ export saves the student name and final grades into a excel file"""
     #TODO: we need to write the finalgrade attribute in the database
     #TODO: currently, this won't include project grades since we don't have project yet
@@ -295,6 +295,7 @@ if __name__=="__main__":
         gradesTable = populateGradesFromDB(names)
     else:
         db = DataInterface.DataInterface()
+	
 
     ui.pushButton.clicked.connect(getRoster)
     ui.add_assignment.clicked.connect(showDialog)
@@ -302,8 +303,7 @@ if __name__=="__main__":
     ui.addDateButton.clicked.connect(addTodaysDate)
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
     ui.gradesTable.cellChanged.connect(cellChangedGrades)
-    #TODO: name the export button: exportButton
-    #ui.exportButton.clicked.connect(export(names))
+    #ui.export_2.clicked.connect(export(names))
 
     ui
 
