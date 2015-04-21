@@ -1,5 +1,4 @@
-#TODOs: getRoster(), addNewProject(), addTodaysDate(),
-#       populateAttendanceFromDB()
+#TODOs: getRoster(), addNewProject()
 #TODO: Get feedback working
 #TODO: Export functionality
 #TODO: New semester/year functionality
@@ -54,7 +53,6 @@ def populateAttendance(students):
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
     table.setRowCount(len(students))
     row=0;
-    # Add students to attendanceTable
     for student in students:
         name1 = QTableWidgetItem(student[0]+" "+student[1])
         table.setItem(row,0,name1)
@@ -187,21 +185,19 @@ def addNewProject(self):
 
         
 def addTodaysDate(self):
-    #TODO: fix for loop
-    #           currently only sets the first student to "Y"
     #TODO: check if today's date is already in DB!
-    today = date.today()
-    today = today.strftime("%m/%d/%y")
-    db.addDate(today)
-    db.save()
-    #----------------------------------
-    ui.attendanceTable.insertColumn(1)
-    ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
-    #----------------------------------
-    rows = ui.attendanceTable.rowCount()
-    preset = QTableWidgetItem("Y")
-    for i in range(0,rows):
-        ui.attendanceTable.setItem(i,1,preset)
+    inputDialog = QInputDialog()
+    today, ok = inputDialog.getText(ui.add_assignment,"Add Date",
+                                   "Enter Date:")
+    if ok:
+        db.addDate(today)
+        db.save()
+        ui.attendanceTable.insertColumn(1)
+        ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
+        rows = ui.attendanceTable.rowCount()
+        for i in range(0,rows):
+            print('hi')
+            ui.attendanceTable.setItem(i,1,QTableWidgetItem("Y"))
         
         
 def populateRosterFromDB(model,names):
@@ -214,27 +210,21 @@ def populateRosterFromDB(model,names):
     
 
 def populateAttendanceFromDB(names):
-    #TODO: fix for loop
-    #           currently only sets the first student to "Y"
-    #TODO: Display date names properly (curently shows "2" instead of
-    #           "04/16/15")
     dates = db.findDates()    
     table = ui.attendanceTable
     table.setColumnCount(len(dates)+1)
     table.setRowCount(len(names))
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    preset = QTableWidgetItem("Y")
-    row=0
-    cols = table.columnCount()-1
-    # Add students to attendanceTable
+    col = table.columnCount()-1
+    rows=len(names)
+    
     for date in dates:
-        col=cols
         table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
-        for student in names:
-            table.setItem(row,0,QTableWidgetItem(student))
-            table.setItem(row,col,preset)
-            row+=1
+        for i in range(0,rows):
+            table.setItem(i,0,QTableWidgetItem(names[i]))
+            table.setItem(i,col,QTableWidgetItem("Y"))
         col=col-1
+                
     return table
 
 
