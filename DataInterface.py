@@ -22,6 +22,7 @@ class DataInterface:
         create a new database. """
         
         self.headerList = []
+        self.groHeaderList = []
         # creates the list of non-default data categories.
         if fileloc:
             tree = ET.parse(fileloc)
@@ -75,11 +76,12 @@ class DataInterface:
         and adding all of their non-default categories to the header
         list. NOT FOR EXTERNAL USE. """
         
-        # creates the list of default categories and the empty header
-        # list.
+        # creates the list of default student categories and the empty header
+        # lists.
         deflist = ["Name","Email", "Units", "Number_of_Absences",
-                   "Number_of_Excused", "In_Class", "Flag"]
+                   "Number_of_Excused", "In_Class", "Flag", "Students"]
         headerlist = []
+        headerlistgro = []
 
         # finds the first non-flagged, non-dropped student and sets
         # the list of their children to catlist.
@@ -98,6 +100,15 @@ class DataInterface:
 
         # sets local headerlist equal to the instanced headerList.
         self.headerList = headerlist
+
+        # repeats process for groups
+        catlistgroup = self.data.find("Groups").getchildren()[0].getchildren()
+
+        for x in range(0, len(catlistgroup)):
+            if(catlistgroup[x].tag not in deflist):
+                headerlistgro.append(catlistgroup[x].tag)
+
+        self.groHeaderList = headerlistgro
 
     
     def addStudent(self, name):
@@ -121,7 +132,7 @@ class DataInterface:
 
         # adds all additional data categories.
         for x in range(0, len(self.headerList)):
-            SubElement(student, self.headerList[x])
+            SubElement(student, self.headerList[x]).attrib["info"] = ""
 
     def addAssignment(self, hwName):
         assignments = self.data.find("Assignments")
@@ -325,6 +336,53 @@ class DataInterface:
             else: SubElement(stulist[x], name)
 
         return True
+
+
+    def addGroup(self, name):
+        groups = self.data.find("Groups")
+
+        group = SubElement(groups, "Group")
+        group.attrib["info"] = name
+
+        SubElement(group, "Units").attrib["info"] = 0
+        SubElement(group, "Students").attrib["info"] = []
+
+    def findGroup(self, name):
+        path = ".//Group[@info='"+name+"']"
+        return self.data.find(path)
+
+    def groMod(self, name, header, value):
+
+        group = self.findGroup(name)
+        group.find(header).attrib["info"] = value
+
+    def groCall(self, name, header):
+
+        group = self.findGroup(name)
+        return group.find(header).attrib["info"]
+
+    def groAdd(self, header, value=""):
+
+        self.groHeaderList.append(header)
+        groups = self.data.find("Groups")
+        clist = groups.getchildren()
+
+        for x in range(0, len(clist)):
+            SubElement(clist[x], header).attrib["info"] = value
+
+    def groStuAdd(self, gname, sname):
+
+        group = self.findGroup(gname)
+
+        group.find("Students").attrib["info"].append(sname)
+        group.find("Units").attrib["info"] += self.findStudent(sname).find("Units")
+
+    def groCommentCall(self, name, header):
+
+        group = self.findGroup(name)
+        return group.find(header).text
+
+
 
 
 
