@@ -337,6 +337,32 @@ class DataInterface:
 
         return True
 
+    def stuGrade(self, name):
+
+        grade = "Pass"
+        student = self.findStudent(name)
+
+        if(student.find("Number of Absences").attrib["info"] > 3):
+            grade = "Fail"
+
+        assignlist = student.getchildren()
+        assigns = self.findHW()
+        totalpoints = 0
+        for x in range(0, len(assignlist)):
+            if(assignlist[x].tag in assigns):
+                totalpoints += assignlist[x].attrib["info"]
+        if(totalpoints < 150): grade = "Fail"
+
+        weeklylist = self.findGroupStu(name).getchildren()
+        deflist = ["Students", "Units"]
+        weekpoints = 0
+        for x in range(0, len(weeklylist)):
+            if(weeklylist[x].tag not in deflist):
+                weekpoints += weeklylist[x].attrib["info"]
+        if(weekpoints < 15): grade = "Fail"
+
+        student.find("Grade").attrib["info"] = grade
+
 
     def addGroup(self, name):
         groups = self.data.find("Groups")
@@ -350,6 +376,15 @@ class DataInterface:
     def findGroup(self, name):
         path = ".//Group[@info='"+name+"']"
         return self.data.find(path)
+
+    def findGroupStu(self, sname):
+        groups = self.data.find("Groups").getchildren()
+
+        for x in range(0, len(groups)):
+            if(sname in groups[x].find("Students").attrib["info"]):
+                return groups[x]
+
+        return None
 
     def groMod(self, name, header, value):
 
@@ -376,6 +411,11 @@ class DataInterface:
 
         group.find("Students").attrib["info"].append(sname)
         group.find("Units").attrib["info"] += self.findStudent(sname).find("Units")
+
+    def groCommentMod(self, name, header, comment):
+
+        group = self.findGroup(name)
+        group.find(header).text = comment
 
     def groCommentCall(self, name, header):
 
