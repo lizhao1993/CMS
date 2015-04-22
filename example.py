@@ -7,6 +7,7 @@
 
 
 import sys
+import os.path
 import loadworkbook
 import DataInterface
 import xml.etree.ElementTree as ET
@@ -34,7 +35,6 @@ def populateTableView(model,students):
         name = student[0]+" "+student[1]
         email = student[2]
         units = str(student[3])
-        db.addStudent(name)
         db.stuMod(name,"Email",email)
         db.stuMod(name,"Units",units)
         model.setItem(row,0,QStandardItem(name))
@@ -49,13 +49,17 @@ def populateAttendance(students):
     and adds data to the (default) attendanceTable; it is called when a new
     roster is uploaded """    
     table = ui.attendanceTable
-    table.setColumnCount(1)
+    table.setColumnCount(2)
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setHorizontalHeaderItem(1,QTableWidgetItem("Total Unexcused"))
     table.setRowCount(len(students))
     row=0;
     for student in students:
-        name1 = QTableWidgetItem(student[0]+" "+student[1])
-        table.setItem(row,0,name1)
+        name = student[0]+" "+student[1]
+        db.addStudent(name)
+        absences = db.stuCall(name,"Number_of_Absences")
+        table.setItem(row,0,QTableWidgetItem(name))
+        table.setItem(row,1,QTableWidgetItem(absences))
         row+=1        
     return table
 
@@ -80,6 +84,7 @@ def getRoster(self):
     """ getRoster is called when the button to import a roster is clicked; it
     reads the imported excel file into a nested list of students and then
     populates the roster, attendanceTable, and the gradesTable """
+    
     fname = QFileDialog.getOpenFileName()
     filename = (fname[0])
     students = loadworkbook.getStudentsFromWorkbook(filename)
@@ -167,20 +172,19 @@ def addNewProject(self):
     buttonBox.rejected.connect(dialog.reject)
     #Do all the adding student table views and the feedback table views    
     result = dialog.exec_()
-    if True:
-        projName = fields[0].text()
-        numPages = ui.toolBox.count()
-        page = QWidget()
-        page.setGeometry(QRect(0,0,100,30))
-        page.setObjectName(projName)
-        #-----------------------------------
-        students = QTableView(page)
-        students.setGeometry(QRect(0, 0, 260, 140))
-        students.setObjectName("stuInProject_"+str(numPages))
-        projectFeedback = QTableView(page)
-        projectFeedback.setGeometry(QRect(0, 150, 260, 150))
-        projectFeedback.setObjectName("projFeedback_"+str(numPages))        
-        ui.toolBox.addItem(page,projName)
+    
+    projName = fields[0].text()
+    numPages = ui.toolBox.count()
+    page = QWidget()
+    page.setGeometry(QRect(0,0,100,30))
+    page.setObjectName(projName)
+    students = QTableView(page)
+    students.setGeometry(QRect(0, 0, 260, 140))
+    students.setObjectName("stuInProject_"+str(numPages))
+    projectFeedback = QTableView(page)
+    projectFeedback.setGeometry(QRect(0, 150, 260, 150))
+    projectFeedback.setObjectName("projFeedback_"+str(numPages))        
+    ui.toolBox.addItem(page,projName)
         
 
         
@@ -192,11 +196,10 @@ def addTodaysDate(self):
     if ok:
         db.addDate(today)
         db.save()
-        ui.attendanceTable.insertColumn(1)
+        ui.attendanceTable.insertColumn(2)
         ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
         rows = ui.attendanceTable.rowCount()
         for i in range(0,rows):
-            print('hi')
             ui.attendanceTable.setItem(i,1,QTableWidgetItem("Y"))
         
         
@@ -212,9 +215,10 @@ def populateRosterFromDB(model,names):
 def populateAttendanceFromDB(names):
     dates = db.findDates()    
     table = ui.attendanceTable
-    table.setColumnCount(len(dates)+1)
+    table.setColumnCount(len(dates)+2)
     table.setRowCount(len(names))
     table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setHorizontalHeaderItem(1,QTableWidgetItem("Total Unexcused"))
     col = table.columnCount()-1
     rows=len(names)
     
@@ -222,6 +226,8 @@ def populateAttendanceFromDB(names):
         table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
         for i in range(0,rows):
             table.setItem(i,0,QTableWidgetItem(names[i]))
+            absences = db.stuCall(names[i],"Number_of_Absences")
+            table.setItem(i,1,QTableWidgetItem(absences))
             table.setItem(i,col,QTableWidgetItem("Y"))
         col=col-1
                 
@@ -279,8 +285,8 @@ if __name__=="__main__":
     ui.setupUi(window)
 
     filename = "database.xml"
-
-    if filename:
+    
+    if os.path.isfile(filename):
         db = DataInterface.DataInterface(filename)
         names = db.stuMassCall("Name")
         model = QStandardItemModel(len(names),3)
