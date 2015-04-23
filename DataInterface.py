@@ -342,7 +342,7 @@ class DataInterface:
         grade = "Pass"
         student = self.findStudent(name)
 
-        if(student.find("Number_of_Absences").attrib["info"] > 3):
+        if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
             grade = "Fail"
 
         assignlist = student.getchildren()
@@ -353,13 +353,13 @@ class DataInterface:
                 totalpoints += assignlist[x].attrib["info"]
         if(totalpoints < 150): grade = "Fail"
 
-        weeklylist = self.findGroupStu(name).getchildren()
-        deflist = ["Students", "Units"]
-        weekpoints = 0
-        for x in range(0, len(weeklylist)):
-            if(weeklylist[x].tag not in deflist):
-                weekpoints += weeklylist[x].attrib["info"]
-        if(weekpoints < 15): grade = "Fail"
+        #weeklylist = self.findGroupStu(name).getchildren()
+        #deflist = ["Students", "Units"]
+        #weekpoints = 0
+        #for x in range(0, len(weeklylist)):
+        #    if(weeklylist[x].tag not in deflist):
+        #        weekpoints += weeklylist[x].attrib["info"]
+        #if(weekpoints < 15): grade = "Fail"
 
         student.find("Grade").attrib["info"] = grade
 

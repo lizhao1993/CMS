@@ -259,10 +259,10 @@ def export():
     """ export saves the student name and final grades into a excel file"""
     names = db.stuMassCall("Name")
     #call the grade function for each student 
-    #for name in names:
-    #    db.stuGrade(name)
+    for name in names:
+        db.stuGrade(name)
     #get the list of grade from database
-    #finalgrades = db.stuMassCall("Grade")
+    finalgrades = db.stuMassCall("Grade")
      
     #make an excel workbook
 
