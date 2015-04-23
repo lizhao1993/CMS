@@ -260,7 +260,7 @@ def export():
     names = db.stuMassCall("Name")
     #call the grade function for each student 
     #for name in names:
-        #db.stuGrade(name)
+    #    db.stuGrade(name)
     #get the list of grade from database
     #finalgrades = db.stuMassCall("Grade")
      
@@ -274,11 +274,14 @@ def export():
     ws1.title = "Grade"
 
     #put in the names and grades
+    #First value is header
+    ws1.cell(row=1, column=1).value = "Name"
     r = 2
     for name in names:
         ws1.cell(row=r, column=1).value = name
         r += 1
 
+    #ws1.cell(row=1, column=2).value = "Grade"
     #j = 2
     #for grade in finalgrades:
     #    ws1.cell(row=j, column=2).value = grade
