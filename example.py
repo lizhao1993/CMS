@@ -172,6 +172,8 @@ def addNewProject(self):
     buttonBox.rejected.connect(dialog.reject)
     #Do all the adding student table views and the feedback table views
     # Li Zhao 04/23
+    #groAdd(le, value=le)
+    
 
 
 
@@ -287,11 +289,11 @@ def export():
         ws1.cell(row=r, column=1).value = name
         r += 1
 
-    #ws1.cell(row=1, column=2).value = "Grade"
-    #j = 2
-    #for grade in finalgrades:
-    #    ws1.cell(row=j, column=2).value = grade
-    #    j += 1
+    ws1.cell(row=1, column=2).value = "Grade"
+    j = 2
+    for grade in finalgrades:
+        ws1.cell(row=j, column=2).value = grade
+        j += 1
 
     #save the file
     wb.save(filename = dest_filename)
