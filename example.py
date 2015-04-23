@@ -255,23 +255,36 @@ def populateGradesFromDB(names):
         row+=1
     return table
 
-def export(names):
+def export():
     """ export saves the student name and final grades into a excel file"""
-    #TODO: we need to write the finalgrade attribute in the database
-    #TODO: currently, this won't include project grades since we don't have project yet
-    finalgrade = db.stuMassCall("Final Grade")
+    names = db.stuMassCall("Name")
+    #call the grade function for each student 
+    #for name in names:
+        #db.stuGrade(name)
+    #get the list of grade from database
+    #finalgrades = db.stuMassCall("Grade")
+     
+    #make an excel workbook
 
     wb = Workbook()
     dest_filename = 'Export.xlsx'
 
+    #make a worksheet
     ws1 = wb.active
     ws1.title = "Grade"
 
-    for row in range(1, len(names)):
-        #TODO: will append work here?
-        ws1.append(names[row])
-        ws1.append(finalgrade[row])
+    #put in the names and grades
+    r = 2
+    for name in names:
+        ws1.cell(row=r, column=1).value = name
+        r += 1
 
+    #j = 2
+    #for grade in finalgrades:
+    #    ws1.cell(row=j, column=2).value = grade
+    #    j += 1
+
+    #save the file
     wb.save(filename = dest_filename)
     
             
@@ -309,7 +322,8 @@ if __name__=="__main__":
     ui.addDateButton.clicked.connect(addTodaysDate)
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
     ui.gradesTable.cellChanged.connect(cellChangedGrades)
-    #ui.export_2.clicked.connect(export(names))
+    
+    ui.export_2.clicked.connect(export)
 
     ui
 
