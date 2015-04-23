@@ -172,7 +172,11 @@ def addNewProject(self):
     buttonBox.rejected.connect(dialog.reject)
     #Do all the adding student table views and the feedback table views
     # Li Zhao 04/23
+    
     #groAdd(le, value=le)
+    #groStuAdd(le, name1)
+    #groStuAdd(le, name1)
+    #groStuAdd(le, name1)
     
 
 
@@ -193,6 +197,10 @@ def addNewProject(self):
     projectFeedback.setGeometry(QRect(0, 150, 260, 150))
     projectFeedback.setObjectName("projFeedback_"+str(numPages))        
     ui.toolBox.addItem(page,projName)
+    
+    # Li Zhao 04/23
+    #feedback = projectFeedback.getText()
+    #groCommentMod(projName, projName, feedback)
         
 
         
