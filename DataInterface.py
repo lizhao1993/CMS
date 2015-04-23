@@ -1,6 +1,6 @@
 __author__ = 'Jake'
 
-#Imports functions to parse and modify XML database.
+# Imports functions to parse and modify XML database.
 
 import xml.etree.ElementTree as ET
 import xml.etree.cElementTree as ET
@@ -15,12 +15,16 @@ class DataInterface:
     errors in which one attempts to modify the attributes of a
     category which does not exist. """
 
+    # the static list of all default headers for students and groups
+    deflist = ["Name", "Email", "Units", "Number_of_Absences",
+               "Number_of_Excused", "In_Class", "Flag", "Students", "Grade", "Students", "Units"]
+
     def __init__(self, fileloc="", year="", semester=""):
         """ Creates the database. If a file location (fileloc), the
         function open up a previously saved database.
         If no file location is passed, the function will use newDB to
         create a new database. """
-        
+
         self.headerList = []
         self.groHeaderList = []
         # creates the list of non-default data categories.
@@ -29,25 +33,25 @@ class DataInterface:
             # reads from the database file into an ElementTree object
             self.data = tree.getroot()
             # sets the root of this object to the global variable data.
-            self.findHeaders() # loads all non-default data categories.
+            self.findHeaders()  # loads all non-default data categories.
         else:
             self.data = self.newDB(year, semester)
             # sets the global variable data to the root returned by
             # newDB.
 
-    
+
     def save(self, filename="database.xml"):
         """ Writes the database to the current folder. If a file name is
         passed, it will be saved under that name.
         If no name is passed, it will be saved under the default name
         "database.xml". """
-        
+
         file = ElementTree(self.data)
         # wraps the global variable data (an Element) in an ElementTree
         # instance.
         file.write(filename)
 
-    
+
     def newDB(self, year="", semester=""):
         """ Returns the root of a new ElementTree named "Gradebook" with
         the three subelements "Students", "Groups",
@@ -55,7 +59,7 @@ class DataInterface:
         stored in the database. Also stores the year
         and semester attributes for the Gradebook if those are passed.
         """
-        
+
         root = ET.Element("Gradebook")
         # creates the Gradebook element and adds its attributes.
         root.attrib["year"] = year
@@ -75,11 +79,9 @@ class DataInterface:
         headers by finding a non-flagged, non-dropped student
         and adding all of their non-default categories to the header
         list. NOT FOR EXTERNAL USE. """
-        
+
         # creates the list of default student categories and the empty header
         # lists.
-        deflist = ["Name","Email", "Units", "Number_of_Absences",
-                   "Number_of_Excused", "In_Class", "Flag", "Students"]
         headerlist = []
         headerlistgro = []
 
@@ -87,48 +89,50 @@ class DataInterface:
         # the list of their children to catlist.
         stulist = self.data.find("Students").getchildren()
         x = 0
-        while(stulist[x].find("Flag").attrib["info"] == "Yes"
-              or stulist[x].find("In_Class").attrib["info"] == "No"):
+        while (stulist[x].find("Flag").attrib["info"] == "Yes"
+               or stulist[x].find("In_Class").attrib["info"] == "No"):
             x += 1
         catlist = stulist[x].getchildren()
 
         # adds all categories whose tags are not a member of stdlist
         # to headerlist.
         for x in range(0, len(headerlist)):
-            if(catlist[x].tag not in deflist):
+            if (catlist[x].tag not in self.deflist):
                 headerlist.append(catlist[x].tag)
 
         # sets local headerlist equal to the instanced headerList.
         self.headerList = headerlist
 
         # repeats process for groups
-##        catlistgroup = self.data.find("Groups").getchildren()[0].getchildren()
-##
-##        for x in range(0, len(catlistgroup)):
-##            if(catlistgroup[x].tag not in deflist):
-##                headerlistgro.append(catlistgroup[x].tag)
-##
-##        self.groHeaderList = headerlistgro
 
-    
+    ##        catlistgroup = self.data.find("Groups").getchildren()[0].getchildren()
+    ##
+    ##        for x in range(0, len(catlistgroup)):
+    ##            if(catlistgroup[x].tag not in self.deflist):
+    ##                headerlistgro.append(catlistgroup[x].tag)
+    ##
+    ##        self.groHeaderList = headerlistgro
+
+
     def addStudent(self, name):
         """ Creates a new student, with defaults of enrolled and
         unflagged.
         Student has all current column categories but without any
         values. """
-        
+
         students = self.data.find("Students")
         # finds the Students data category.
         student = SubElement(students, "Name")
         # adds a new subelement with the student's name as a tag.
         student.attrib["info"] = name
         # adds all default student data categories.
-        SubElement(student, "Email").attrib["info"]=""
-        SubElement(student, "Units").attrib["info"]=""
-        SubElement(student, "Number_of_Absences").attrib["info"]="0"
-        SubElement(student, "Number_of_Excused").attrib["info"]="0"
+        SubElement(student, "Email").attrib["info"] = ""
+        SubElement(student, "Units").attrib["info"] = ""
+        SubElement(student, "Number_of_Absences").attrib["info"] = "0"
+        SubElement(student, "Number_of_Excused").attrib["info"] = "0"
         SubElement(student, "In_Class").attrib["info"] = "Yes"
         SubElement(student, "Flag").attrib["info"] = "No"
+        SubElement(student, "Grade").attrib["info"] = "Pass"
 
         # adds all additional data categories.
         for x in range(0, len(self.headerList)):
@@ -144,27 +148,27 @@ class DataInterface:
         ddate = SubElement(dates, "Date")
         ddate.attrib["info"] = today
 
-    
+
     def findStudent(self, name):
         """ Returns the student Element with the tag of the given
         name. NOT FOR EXTERNAL USE. """
-        
-        path = ".//Name[@info='"+name+"']"
+
+        path = ".//Name[@info='" + name + "']"
         return self.data.find(path)
 
-    
+
     def stuSort(self, vlist):
         """ Takes a list of student elements, removes all dropped or
         flagged students and sorts alphabetically.
         NOT FOR EXTERNAL USE. """
-        
+
         nlist = []
         v2list = []
 
         for x in range(0, len(vlist)):
-            if(vlist[x].find("Flag").attrib["info"] == "No"
-               or vlist[x].find("In_Class").attrib["info"] == "Yes"):
-                   nlist.append(vlist[x].tag)
+            if (vlist[x].find("Flag").attrib["info"] == "No"
+                or vlist[x].find("In_Class").attrib["info"] == "Yes"):
+                nlist.append(vlist[x].tag)
         nlist.sort()
 
         for x in range(0, len(nlist)):
@@ -172,26 +176,26 @@ class DataInterface:
 
         return v2list
 
-     
+
     def dropStudent(self, name):
         """ Sets the InClass attribute to indicate that the student
         has dropped. """
-        
+
         student = self.findStudent(name)
         student.find("In_Class").attrib["info"] = "No"
 
-    
+
     def stuMod(self, name, header, value):
         """ Changes the attribute of the given header category within
         the given student element. """
-        
+
         student = self.findStudent(name)
         student.find(header).attrib["info"] = value
 
     def stuCall(self, name, header):
         """ Gets the attribute of the given header category within
         the given student element. """
-        
+
         student = self.findStudent(name)
         return student.find(header).attrib["info"]
 
@@ -204,15 +208,15 @@ class DataInterface:
         student = self.findStudent(name)
         category = "Number_of_Absences"
 
-        if(excused): category = "Number_of_Excused"
+        if (excused): category = "Number_of_Excused"
 
         # get Number_of_Absences and convert to int so we can increment
         numabs = int(student.find(category).attrib["info"])
-        
-        if(increment):
-            numabs+=1
-            student.find(category).attrib["info"] =str(numabs)
-    
+
+        if (increment):
+            numabs += 1
+            student.find(category).attrib["info"] = str(numabs)
+
     def stuAdd(self, header, value=""):
         """ Adds a category with the tag given by the header to all
         students and adds this category to the list of
@@ -222,7 +226,7 @@ class DataInterface:
         duplicate categories, which will cause errors.
         Thus, this function should be used in conjunction with stuQuery
         which checks for duplicates. """
-        
+
         self.headerList.append(header)
         students = self.data.find("Students")
         clist = students.getchildren()
@@ -230,15 +234,15 @@ class DataInterface:
         for x in range(0, len(clist)):
             SubElement(clist[x], header).attrib["info"] = value
 
-     
+
     def stuQuery(self, header):
         """ Returns true if the students have a category with the given
         header as a tag and false if they do not. Use
         this to avoid adding duplicate categories. """
-        
+
         return header in self.headerList
 
-     
+
     def stuMassMod(self, header, vlist):
         """ Changes all values of the given header to the corresponding
         values of a list of values. This list must
@@ -247,11 +251,11 @@ class DataInterface:
         name. If the list given is the wrong size or the header is not
         a category, the function will return
         false. Otherwise, true will be returned. """
-        
+
         slist = self.data.find("Students").getchildren()
         slist = self.stuSort(slist)
 
-        if((len(slist) != len(vlist)) or (header in self.headerList)):
+        if ((len(slist) != len(vlist)) or (header in self.headerList)):
             return False
 
         for x in range(0, len(slist)):
@@ -263,7 +267,7 @@ class DataInterface:
         dates = self.data.findall(".//Date")
         dateNames = []
 
-        for x in range(0,len(dates)):
+        for x in range(0, len(dates)):
             dateNames.append(dates[x].attrib["info"])
         return dateNames
 
@@ -271,11 +275,11 @@ class DataInterface:
         assignments = self.data.findall(".//Homework")
         hwNames = []
 
-        for x in range(0,len(assignments)):
+        for x in range(0, len(assignments)):
             hwNames.append(assignments[x].attrib["info"])
-        return hwNames    
+        return hwNames
 
-    
+
     def stuMassCall(self, header):
         """ Returns a list of the values each student has of a given
         category with the header as a tag. This
@@ -284,56 +288,53 @@ class DataInterface:
         header is not the tag of a category, then the function will
         return an empty string. """
 
-        path = ".//"+header+""
+        path = ".//" + header + ""
         students = self.data.findall(path)
-        
-        vlist = []
-        deflist = ["Name","Email", "Units", "Number_of_Absences",
-                   "Number_of_Excused", "In_Class", "Flag"]
-        headers = deflist+self.headerList
 
-        if(header not in headers):
+        vlist = []
+        headers = self.deflist + self.headerList
+
+        if (header not in headers):
             return ""
         for x in range(0, len(students)):
             vlist.append(students[x].attrib["info"])
         return vlist
 
-    
+
     def stuRec(self, name):
         """ Reconciles a student's categories with the database
         headerList. Should be used whenever a student
         is un-flagged or un-dropped. """
-        
+
         student = self.findStudent(name)
         catlist = student.getchildren()
-        stdlist = ["Name","Email", "Units", "Number_of_Absences",
-                   "Number_of_Excused", "In_Class", "Flag"]
 
-        if(len(catlist) == (len(self.headerList)+6)): return True
+        if (len(catlist) == (len(self.headerList) + 6)): return True
 
         localheaders = []
         for x in range(0, len(catlist)):
-            if(catlist[x].tag not in stdlist):
+            if (catlist[x].tag not in self.deflist):
                 localheaders.append(catlist[x].tag)
 
         for x in range(0, len(self.headerList)):
-            if(self.headerList[x] not in localheaders):
+            if (self.headerList[x] not in localheaders):
                 SubElement(student, self.headerList[x])
 
-    
+
     def stuCatMod(self, target, name):
         """ Allows the tag of a preexisting student category to be
         changed without effecting the category's
         stored data. """
-        
-        if(target not in self.headerList): return False
+
+        if (target not in self.headerList): return False
         self.headerList.remove(target)
 
         stulist = self.data.find("Students").getchildren()
         for x in range(0, len(stulist)):
-            if(stulist[x].find(target)):
+            if (stulist[x].find(target)):
                 stulist[x].find(target).tag = name
-            else: SubElement(stulist[x], name)
+            else:
+                SubElement(stulist[x], name)
 
         return True
 
@@ -342,24 +343,23 @@ class DataInterface:
         grade = "Pass"
         student = self.findStudent(name)
 
-        if(student.find("Number_of_Absences").attrib["info"] > 3):
+        if (student.find("Number_of_Absences").attrib["info"] > 3):
             grade = "Fail"
 
         assignlist = student.getchildren()
         assigns = self.findHW()
         totalpoints = 0
         for x in range(0, len(assignlist)):
-            if(assignlist[x].tag in assigns):
+            if (assignlist[x].tag in assigns):
                 totalpoints += assignlist[x].attrib["info"]
-        if(totalpoints < 150): grade = "Fail"
+        if (totalpoints < 150): grade = "Fail"
 
         weeklylist = self.findGroupStu(name).getchildren()
-        deflist = ["Students", "Units"]
         weekpoints = 0
         for x in range(0, len(weeklylist)):
-            if(weeklylist[x].tag not in deflist):
+            if (weeklylist[x].tag not in self.deflist):
                 weekpoints += weeklylist[x].attrib["info"]
-        if(weekpoints < 15): grade = "Fail"
+        if (weekpoints < 15): grade = "Fail"
 
         student.find("Grade").attrib["info"] = grade
 
@@ -374,17 +374,17 @@ class DataInterface:
         SubElement(group, "Students").attrib["info"] = []
 
     def findGroup(self, name):
-        path = ".//Group[@info='"+name+"']"
+        path = ".//Group[@info='" + name + "']"
         return self.data.find(path)
 
     def findGroupStu(self, sname):
         groups = self.data.find("Groups").getchildren()
 
         for x in range(0, len(groups)):
-            if(sname in groups[x].find("Students").attrib["info"]):
+            if (sname in groups[x].find("Students").attrib["info"]):
                 return groups[x]
 
-        return None
+        return ET.Element("None")
 
     def groMod(self, name, header, value):
 
