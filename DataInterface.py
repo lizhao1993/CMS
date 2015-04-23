@@ -102,13 +102,13 @@ class DataInterface:
         self.headerList = headerlist
 
         # repeats process for groups
-        catlistgroup = self.data.find("Groups").getchildren()[0].getchildren()
-
-        for x in range(0, len(catlistgroup)):
-            if(catlistgroup[x].tag not in deflist):
-                headerlistgro.append(catlistgroup[x].tag)
-
-        self.groHeaderList = headerlistgro
+##        catlistgroup = self.data.find("Groups").getchildren()[0].getchildren()
+##
+##        for x in range(0, len(catlistgroup)):
+##            if(catlistgroup[x].tag not in deflist):
+##                headerlistgro.append(catlistgroup[x].tag)
+##
+##        self.groHeaderList = headerlistgro
 
     
     def addStudent(self, name):
