@@ -170,7 +170,13 @@ def addNewProject(self):
     form.addRow(buttonBox)
     buttonBox.accepted.connect(dialog.accept)
     buttonBox.rejected.connect(dialog.reject)
-    #Do all the adding student table views and the feedback table views    
+    #Do all the adding student table views and the feedback table views
+    # Li Zhao 04/23
+
+
+
+
+    
     result = dialog.exec_()
     
     projName = fields[0].text()
