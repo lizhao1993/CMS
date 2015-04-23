@@ -342,7 +342,7 @@ class DataInterface:
         grade = "Pass"
         student = self.findStudent(name)
 
-        if(student.find("Number of Absences").attrib["info"] > 3):
+        if(student.find("Number_of_Absences").attrib["info"] > 3):
             grade = "Fail"
 
         assignlist = student.getchildren()
