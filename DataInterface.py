@@ -344,9 +344,9 @@ class DataInterface:
         student = self.findStudent(name)
 
 
-        if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
+        #if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
 
-            grade = "Fail"
+         #   grade = "Fail"
 
         assignlist = student.getchildren()
         assigns = self.findHW()
