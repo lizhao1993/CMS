@@ -22,6 +22,7 @@ from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.cell import get_column_letter
 
+
 def populateTableView(model,students):
     """ This is a function for populating the roster;
     populateTableView takes in a nested list of students with their info,
@@ -243,6 +244,7 @@ def addTodaysDate(self):
         db.addDate(today)
         db.save()
         ui.attendanceTable.insertColumn(2)
+
         ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
         rows = ui.attendanceTable.rowCount()
         for i in range(0,rows):
@@ -374,6 +376,7 @@ if __name__=="__main__":
     ui.export_2.clicked.connect(export)
 
     ui
+
 
     window.show()
     sys.exit(app.exec_())
