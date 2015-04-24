@@ -83,7 +83,7 @@ class Ui_MainWindow(object):
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setGeometry(QtCore.QRect(0, 0, 261, 324))
         self.page_3.setObjectName("page_3")
-        self.toolBox.addItem(self.page_3, "")
+        #self.toolBox.addItem(self.page_3, "")
         self.verticalLayout.addWidget(self.toolBox)
         self.projectScrollBox.setWidget(self.projectPagesContent)
         self.giveFeedBack = QtWidgets.QGroupBox(self.Projects)

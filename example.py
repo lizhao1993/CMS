@@ -146,6 +146,18 @@ def showDialog(self):
         db.addAssignment(text)
         db.save()
 
+def populateProjTable(model,names):
+    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
+    row=0
+    for name in names:
+        units=db.stuCall(name, "Units")
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(units))
+        row+=1
+    return model
+    
+    
 
 def addNewProject(self):
     #TODO: Create model for the student info: name & number of units
@@ -186,7 +198,11 @@ def addNewProject(self):
     result = dialog.exec_()
     
     projName = fields[0].text()
+    stuNames = fields[1].text().split(',')
+    print(stuNames)
     numPages = ui.toolBox.count()
+    combo = ui.chooseProject
+    #set up the page to display project data
     page = QWidget()
     page.setGeometry(QRect(0,0,100,30))
     page.setObjectName(projName)
@@ -195,8 +211,22 @@ def addNewProject(self):
     students.setObjectName("stuInProject_"+str(numPages))
     projectFeedback = QTableView(page)
     projectFeedback.setGeometry(QRect(0, 150, 260, 150))
-    projectFeedback.setObjectName("projFeedback_"+str(numPages))        
+    projectFeedback.setObjectName("projFeedback_"+str(numPages))
+    #add page to UI & to comboBox
     ui.toolBox.addItem(page,projName)
+    combo.addItem(projName)
+    #create model for student & units:
+    model=QStandardItemModel(len(stuNames),2)
+    model=populateProjTable(model,stuNames)
+    students.show()
+    students.setModel(model)
+    #create model for project feedback & dates
+    feedmodel=QStandardItemModel(len(stuNames),2)
+    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
+    projectFeedback.show()
+    projectFeedback.setModel(feedmodel)
+    
     
     # Li Zhao 04/23
     #feedback = projectFeedback.getText()
@@ -340,8 +370,7 @@ if __name__=="__main__":
     ui.addProjectBttn.clicked.connect(addNewProject)
     ui.addDateButton.clicked.connect(addTodaysDate)
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
-    ui.gradesTable.cellChanged.connect(cellChangedGrades)
-    
+    ui.gradesTable.cellChanged.connect(cellChangedGrades)    
     ui.export_2.clicked.connect(export)
 
     ui
