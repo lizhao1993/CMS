@@ -260,12 +260,13 @@ def addTodaysDate(self):
     if ok:
         db.addDate(today)
         db.save()
-        ui.attendanceTable.insertColumn(2)
+        colnum = ui.attendanceTable.columnCount()
+        ui.attendanceTable.insertColumn(colnum)
 
-        ui.attendanceTable.setHorizontalHeaderItem(1,QTableWidgetItem(today))
+        ui.attendanceTable.setHorizontalHeaderItem(colnum,QTableWidgetItem(today))
         rows = ui.attendanceTable.rowCount()
         for i in range(0,rows):
-            ui.attendanceTable.setItem(i,1,QTableWidgetItem("Y"))
+            ui.attendanceTable.setItem(i,colnum,QTableWidgetItem("Y"))
         
         
 def populateRosterFromDB(model,names):
