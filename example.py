@@ -115,6 +115,12 @@ def cellChangedAttendance(self):
         if name:
             name = name.text()
             db.stuAbsence(name)
+            inp = ui.attendanceTable.item(row,col)
+            inptext= inp.text()
+            date = ui.attendanceTable.horizontalHeaderItem(col).text()
+            
+            db.stuMod(name,date,inptext)
+            
             db.save()
 
 def cellChangedGrades(self):
@@ -259,6 +265,7 @@ def addTodaysDate(self):
                                    "Enter Date:")
     if ok:
         db.addDate(today)
+        db.stuAdd(today,"Y")
         db.save()
         colnum = ui.attendanceTable.columnCount()
         ui.attendanceTable.insertColumn(colnum)
