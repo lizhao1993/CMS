@@ -157,7 +157,30 @@ def populateProjTable(model,names):
         model.setItem(row,1,QStandardItem(units))
         row+=1
     return model
-    
+
+def projComboBoxFill(dialog):
+    combo = QComboBox(dialog)
+    names=db.stuMassCall("Name")
+    for name in names:
+        combo.addItem(name)
+    return combo
+        
+def onChanged(self):
+    value = ui.numStudents.value() 
+    form=ui.form 
+    numAlready=form.rowCount()
+    total=value+4
+    print(total-numAlready)
+    if total>numAlready: #we need boxes
+        for i in range(0,total-numAlready):
+            combo=projComboBoxFill(ui.dialog)
+            form.addRow(combo)
+    if total<numAlready:
+        for i in range(0,abs(total-numAlready)):
+            form.takeAt(6)
+    if total==numAlready:
+        combo=projComboBoxFill(ui.dialog)
+        form.addRow(combo)
     
 
 def addNewProject(self):
@@ -165,25 +188,28 @@ def addNewProject(self):
     #TODO: Create model for the feedback: date & comment
     #TODO: Add project to the database
     #TODO: Add students to project group
-    dialog = QDialog()
-    form = QFormLayout(dialog)
+    ui.dialog = QDialog()
+    ui.form = QFormLayout(ui.dialog)
+    form = ui.form
     #Get the info from the dialog window
-    form.addRow(QLabel("Enter project name and students, separated with a comma."))
+    form.addRow(QLabel("Enter project name and students."))
     fields = []
-    le = QLineEdit(dialog) #will contain the user input for project names
+    le = QLineEdit(ui.dialog) #will contain the user input for project names
     form.addRow("Project Name",le)
-    le2 = QLineEdit(dialog) #will contain user input for student names
-    form.addRow("Student Names",le2)
     fields.append(le)
-    fields.append(le2)
+    #user inputs for the students
+    ui.numStudents = QSpinBox(ui.dialog)
+    ui.numStudents.setRange(1,10)
+    form.addRow("Number of Students",ui.numStudents)
+    ui.numStudents.valueChanged.connect(onChanged)
     #Add the OK and Cancel buttons
     buttonBox = QDialogButtonBox(
         QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
-        Qt.Horizontal, dialog)
+        Qt.Horizontal, ui.dialog)
     form.addRow(buttonBox)
-    buttonBox.accepted.connect(dialog.accept)
-    buttonBox.rejected.connect(dialog.reject)
-    #Do all the adding student table views and the feedback table views
+    buttonBox.accepted.connect(ui.dialog.accept)
+    buttonBox.rejected.connect(ui.dialog.reject)
+
     # Li Zhao 04/23
     
     #groAdd(le, value=le)
@@ -191,16 +217,14 @@ def addNewProject(self):
     #groStuAdd(le, name1)
     #groStuAdd(le, name1)
     
-
-
-
-
+    result = ui.dialog.exec_()
     
-    result = dialog.exec_()
-    
+    # Li Zhao 04/23
+    #feedback = projectFeedback.getText()
+    #groCommentMod(projName, projName, feedback)
+        
+def accepted(self):        
     projName = fields[0].text()
-    stuNames = fields[1].text().split(',')
-    print(stuNames)
     numPages = ui.toolBox.count()
     combo = ui.chooseProject
     #set up the page to display project data
@@ -216,24 +240,17 @@ def addNewProject(self):
     #add page to UI & to comboBox
     ui.toolBox.addItem(page,projName)
     combo.addItem(projName)
-    #create model for student & units:
-    model=QStandardItemModel(len(stuNames),2)
-    model=populateProjTable(model,stuNames)
-    students.show()
-    students.setModel(model)
-    #create model for project feedback & dates
-    feedmodel=QStandardItemModel(len(stuNames),2)
-    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
-    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
-    projectFeedback.show()
-    projectFeedback.setModel(feedmodel)
-    
-    
-    # Li Zhao 04/23
-    #feedback = projectFeedback.getText()
-    #groCommentMod(projName, projName, feedback)
-        
-
+##    #create model for student & units:
+##    model=QStandardItemModel(len(stuNames),2)
+##    model=populateProjTable(model,stuNames)
+##    students.show()
+##    students.setModel(model)
+##    #create model for project feedback & dates
+##    feedmodel=QStandardItemModel(len(stuNames),2)
+##    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+##    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
+##    projectFeedback.show()
+##    projectFeedback.setModel(feedmodel)
         
 def addTodaysDate(self):
     #TODO: check if today's date is already in DB!
