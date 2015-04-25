@@ -199,23 +199,25 @@ class DataInterface:
         student = self.findStudent(name)
         return student.find(header).attrib["info"]
 
-    def stuAbsence(self, name, increment=1, excused=0):
+    def stuAbsence(self, name):
         """  Adds or removes an absence or excused absence  from the
         given student depending on whether increment is
         true or false and excused is true or false respectively. This
         must be called along with the """
 
         student = self.findStudent(name)
-        category = "Number_of_Absences"
+        dateList = self.findDates()
+        slist = student.getchildren()
 
-        if (excused): category = "Number_of_Excused"
+        for x in range(0, len(slist)):
+            if(slist[x] in dateList):
+                if(slist[x].attrib["info"] == "E"):
+                    student.find("Number_of_Excused").attrib["info"] = student.find("Number_of_Excused").attrib["info"] + 1
+                else:
+                    if(slist[x].attrib["info"] != "Y"):
+                        student.find("Number_of_Absences").attrib["info"] = student.find("Number_of_Absences").attrib["info"] + 1
 
-        # get Number_of_Absences and convert to int so we can increment
-        numabs = int(student.find(category).attrib["info"])
 
-        if (increment):
-            numabs += 1
-            student.find(category).attrib["info"] = str(numabs)
 
     def stuAdd(self, header, value=""):
         """ Adds a category with the tag given by the header to all
@@ -344,9 +346,8 @@ class DataInterface:
         student = self.findStudent(name)
 
 
-        #if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
-
-         #   grade = "Fail"
+        if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
+            grade = "Fail"
 
         assignlist = student.getchildren()
         assigns = self.findHW()
@@ -423,6 +424,18 @@ class DataInterface:
 
         group.find("Students").attrib["info"].append(sname)
         group.find("Units").attrib["info"] += self.findStudent(sname).find("Units")
+
+    def groStudRemove(self, gname, sname):
+
+        group = self.findGroup(gname)
+        slist = group.find("Students").attrib["info"]
+        newlist = []
+
+        for x in range(0, len(slist)):
+            if sname != slist[x]: newlist.append(slist[x])
+
+        group.find("Students").attrib["info"] = newlist
+
 
     def groCommentMod(self, name, header, comment):
 
