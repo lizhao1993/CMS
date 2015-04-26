@@ -190,8 +190,10 @@ class DataInterface:
         the given student element. """
 
         student = self.findStudent(name)
-        path = ".//" + header
-        student.find(path).attrib["info"] = value
+        print(header)
+        print(name)
+        print(value)
+        student.find(header).attrib["info"] = value
 
     def stuCall(self, name, header):
         """ Gets the attribute of the given header category within
@@ -208,7 +210,7 @@ class DataInterface:
         slist = student.getchildren()
 
         for x in range(0, len(slist)):
-            if(slist[x] in dateList):
+            if(slist[x].tag in dateList):
                 if(slist[x].attrib["info"] == "E"):
                     student.find("Number_of_Excused").attrib["info"] = student.find("Number_of_Excused").attrib["info"] + 1
                 else:

@@ -120,13 +120,29 @@ def cellChangedAttendance(self):
         name = ui.attendanceTable.item(row,0)
         if name:
             name = name.text()
-            db.stuAbsence(name)
-            #get value of changed cell
-            inp = ui.attendanceTable.item(row,col)
-            inptext= inp.text()
-            date = ui.attendanceTable.horizontalHeaderItem(col).text()            
-            db.stuMod(name,date,inptext)            
-            db.save()
+            date = ui.attendanceTable.horizontalHeaderItem(col)
+            print(name)
+            if date:
+                date = date.text()
+                item = ui.attendanceTable.currentItem()
+                #item = ui.attendanceTable.item(row,col)
+                print(date)               
+                if item:
+                    item = item.text()
+                    print(item)
+                    db.stuAbsence(name)
+                    db.stuMod(name,date,item)                  
+                    
+                    db.save()
+            #print (date)
+            
+            #inp = ui.attendanceTable.item(row,col)
+            #inptext= inp.text()
+            
+            
+            #db.stuMod(name,date,inptext)
+            
+            #db.save()
 
 def cellChangedGrades(self):
     """
@@ -141,12 +157,15 @@ def cellChangedGrades(self):
         name = ui.gradesTable.item(row,0) #student name
         if name:
             name = name.text()
-            header = ui.gradesTable.horizontalHeaderItem(col) #homework name
+            print(name)
+            header = ui.gradesTable.horizontalHeaderItem(col)#homework name
             if header:
                 header = header.text()
-                item = ui.gradesTable.currentItem() #value of changed cell
+                print(header)
+                item = ui.gradesTable.currentItem()#value of changed cell
                 if item:
                     item = item.text()
+                    print(item)
                     db.stuMod(name,header,item)
                     db.save()
 
@@ -318,16 +337,21 @@ def addTodaysDate(self):
     today, ok = inputDialog.getText(ui.add_assignment,"Add Date",
                                    "Enter Date:")
     if ok:
-        db.addDate(today)
-        db.stuAdd(today,"Y")
-        db.save()
         colnum = ui.attendanceTable.columnCount()
         ui.attendanceTable.insertColumn(colnum)
-
         ui.attendanceTable.setHorizontalHeaderItem(colnum,QTableWidgetItem(today))
+        db.stuAdd(today,"Y")
+        db.addDate(today)
+        #print(today)
+        
+        db.save()
+
+
+        
         rows = ui.attendanceTable.rowCount()
         for i in range(0,rows):
             ui.attendanceTable.setItem(i,colnum,QTableWidgetItem("Y"))
+
         
         
 def populateRosterFromDB(model,names):
