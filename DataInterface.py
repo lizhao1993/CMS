@@ -185,12 +185,13 @@ class DataInterface:
         student.find("In_Class").attrib["info"] = "No"
 
 
-    def stuMod(self, name, header, value):
+    def stuMod(self, name, header, value=""):
         """ Changes the attribute of the given header category within
         the given student element. """
 
         student = self.findStudent(name)
-        student.find(header).attrib["info"] = value
+        path = ".//" + header
+        student.find(path).attrib["info"] = value
 
     def stuCall(self, name, header):
         """ Gets the attribute of the given header category within
@@ -200,10 +201,7 @@ class DataInterface:
         return student.find(header).attrib["info"]
 
     def stuAbsence(self, name):
-        """  Adds or removes an absence or excused absence  from the
-        given student depending on whether increment is
-        true or false and excused is true or false respectively. This
-        must be called along with the """
+        """  """
 
         student = self.findStudent(name)
         dateList = self.findDates()
@@ -346,13 +344,7 @@ class DataInterface:
         student = self.findStudent(name)
         print (int(student.find("Number_of_Absences").attrib["info"]))
 
-
-<<<<<<< HEAD
-        if(int(student.find("Number_of_Absences").attrib["info"]) >= 3):
-
-=======
         if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
->>>>>>> origin/master
             grade = "Fail"
 
         #assignlist = student.getchildren()
