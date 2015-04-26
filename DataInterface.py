@@ -388,7 +388,7 @@ class DataInterface:
         group = SubElement(groups, "Group")
         group.attrib["info"] = name
 
-        SubElement(group, "Units").attrib["info"] = 0
+        SubElement(group, "Units").attrib["info"] = "0"
         SubElement(group, "Students").attrib["info"] = []
 
     def findGroup(self, name):
@@ -428,7 +428,10 @@ class DataInterface:
         group = self.findGroup(gname)
 
         group.find("Students").attrib["info"].append(sname)
-        group.find("Units").attrib["info"] += self.findStudent(sname).find("Units")
+        groupUnits=int(group.find("Units").attrib["info"])
+        studentUnits=int(self.findStudent(sname).find("Units").attrib["info"])
+        groupUnits+=studentUnits
+        group.find("Units").attrib["info"]=str(groupUnits)
 
     def groStudRemove(self, gname, sname):
 

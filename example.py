@@ -121,15 +121,11 @@ def cellChangedAttendance(self):
         if name:
             name = name.text()
             date = ui.attendanceTable.horizontalHeaderItem(col)
-            print(name)
             if date:
                 date = date.text()
                 item = ui.attendanceTable.currentItem()
-                #item = ui.attendanceTable.item(row,col)
-                print(date)               
                 if item:
                     item = item.text()
-                    print(item)
                     db.stuAbsence(name)
                     db.stuMod(name,date,item)                  
                     
@@ -157,15 +153,12 @@ def cellChangedGrades(self):
         name = ui.gradesTable.item(row,0) #student name
         if name:
             name = name.text()
-            print(name)
             header = ui.gradesTable.horizontalHeaderItem(col)#homework name
             if header:
                 header = header.text()
-                print(header)
                 item = ui.gradesTable.currentItem()#value of changed cell
                 if item:
                     item = item.text()
-                    print(item)
                     db.stuMod(name,header,item)
                     db.save()
 
@@ -313,21 +306,25 @@ def accepted():
     about the project and the students. It gets the Project's name and creates
     a tableView for the students' information and a tableView for the feedback
     on the project. It makes calls to populateProjTable and populateFeedTable.
+    It also adds the project group and students in it to the database.
     """
     form=ui.form
     rows=form.count()
-    print(rows)
     fields=[]#contains names of students
 
     projNameObj=form.itemAt(2)#returns QLayoutItem
     projName=projNameObj.widget()#should be lineEdit
     projName=projName.text()
+    db.addGroup(projName)#add to DB
 
     for i in range(6,rows):#starts at item 6 in row 4
         layoutObj=form.itemAt(i)
         objWidget=layoutObj.widget()
         comboText=objWidget.currentText()
         fields.append(comboText)
+        db.groStuAdd(projName,comboText)#add student to group
+
+    db.save()
     
     numPages = ui.toolBox.count() #the number of existing projects
     combo = ui.chooseProject
@@ -376,12 +373,8 @@ def addTodaysDate(self):
         ui.attendanceTable.insertColumn(colnum)
         ui.attendanceTable.setHorizontalHeaderItem(colnum,QTableWidgetItem(today))
         db.stuAdd(today,"Y")
-        db.addDate(today)
-        #print(today)
-        
+        db.addDate(today)        
         db.save()
-
-
         
         rows = ui.attendanceTable.rowCount()
         for i in range(0,rows):
@@ -418,17 +411,24 @@ def populateAttendanceFromDB(names):
     table.setHorizontalHeaderItem(1,QTableWidgetItem("Total Unexcused"))
     col = table.columnCount()-1
     rows=len(names)
-    
-    for date in dates:
-        table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
-        for i in range(0,rows):
+
+    if len(dates)!=0:
+        for date in dates:
+            table.setHorizontalHeaderItem(col,QTableWidgetItem(date))
+            for i in range(0,rows):
+                table.setItem(i,0,QTableWidgetItem(names[i]))
+                absences = db.stuCall(names[i],"Number_of_Absences")
+                table.setItem(i,1,QTableWidgetItem(absences))
+                #look up student's attendance on that date
+                att=db.stuCall(names[i],date)
+                table.setItem(i,col,QTableWidgetItem(att))
+            col=col-1
+
+    else:
+         for i in range(0,rows):
             table.setItem(i,0,QTableWidgetItem(names[i]))
             absences = db.stuCall(names[i],"Number_of_Absences")
             table.setItem(i,1,QTableWidgetItem(absences))
-            #look up student's attendance on that date
-            att=db.stuCall(names[i],date)
-            table.setItem(i,col,QTableWidgetItem(att))
-        col=col-1
                 
     return table
 
