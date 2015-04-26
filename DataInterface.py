@@ -209,14 +209,19 @@ class DataInterface:
         dateList = self.findDates()
         slist = student.getchildren()
 
+        absence = 0
+        excused = 0
+
         for x in range(0, len(slist)):
             if(slist[x].tag in dateList):
                 if(slist[x].attrib["info"] == "E"):
-                    student.find("Number_of_Excused").attrib["info"] = student.find("Number_of_Excused").attrib["info"] + 1
+                    excused += 1
                 else:
                     if(slist[x].attrib["info"] != "Y"):
-                        student.find("Number_of_Absences").attrib["info"] = student.find("Number_of_Absences").attrib["info"] + 1
+                        absence += 1
 
+            student.find("Number_of_Excused").attrib["info"] = str(excused)
+            student.find("Number_of_Absences").attrib["info"] = str(absence)
 
 
     def stuAdd(self, header, value=""):
