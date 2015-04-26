@@ -22,7 +22,7 @@ from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.cell import get_column_letter
 
-
+#--------------------------------------DONE----------------------------------
 def populateTableView(model,students):
     """ This is a function for populating the roster;
     populateTableView takes in a nested list of students with their info,
@@ -45,6 +45,7 @@ def populateTableView(model,students):
     db.save()
     return model
 
+#--------------------------------------DONE----------------------------------
 def populateAttendance(students):
     """ populateattendanceTable takes in a nested list of students with their info
     and adds data to the (default) attendanceTable; it is called when a new
@@ -64,6 +65,7 @@ def populateAttendance(students):
         row+=1        
     return table
 
+#--------------------------------------DONE----------------------------------
 def populateGrades(students):
     """ populateGrades takes in a nested list of students and adds their names
     to the first column in the grades table; it is called when a new roster
@@ -79,6 +81,7 @@ def populateGrades(students):
         row+=1
     return table
 
+#--------------------------------------TODO----------------------------------
 def getRoster(self):
     #TODO: Check if the db already has stuff in it and if so, do a
     #      comparison
@@ -105,7 +108,8 @@ def getRoster(self):
     ui.rosterView.setModel(model)
     
     db.save()
-    
+
+#--------------------------------------DONE----------------------------------
 def cellChangedAttendance(self):
     """
     cellChangedAttendance takes in no inputs and returns no outputs;
@@ -130,16 +134,8 @@ def cellChangedAttendance(self):
                     db.stuMod(name,date,item)                  
                     
                     db.save()
-            #print (date)
-            
-            #inp = ui.attendanceTable.item(row,col)
-            #inptext= inp.text()
-            
-            
-            #db.stuMod(name,date,inptext)
-            
-            #db.save()
 
+#--------------------------------------DONE----------------------------------
 def cellChangedGrades(self):
     """
     cellChangedAttendance takes in no inputs and returns no outputs;
@@ -161,7 +157,8 @@ def cellChangedGrades(self):
                     item = item.text()
                     db.stuMod(name,header,item)
                     db.save()
-
+                    
+#--------------------------------------DONE----------------------------------
 def showDialog(self):
     """
     input: none; output: none
@@ -181,7 +178,8 @@ def showDialog(self):
         db.stuAdd(text) #add assignment as tag in each student
         db.addAssignment(text) #add to list of assignments
         db.save()
-
+        
+#--------------------------------------DONE----------------------------------
 def populateProjTable(model,names):
     """
     input: model for the student in project table view and a list of names
@@ -200,8 +198,9 @@ def populateProjTable(model,names):
         row+=1
     return model
 
-def populateFeedTable(model,names):
-    """
+#--------------------------------------TODO----------------------------------
+def populateProjTableFromDB(model,names):
+     """
     input: model for the student in project table view and a list of names
     output: model;
     populateProjTable is called once a new project is added. It creates a two-
@@ -218,6 +217,25 @@ def populateFeedTable(model,names):
         row+=1
     return model
 
+#--------------------------------------TODO----------------------------------
+def populateFeedTableFromDB(model,names):
+    """
+    input: model for the student in project table view and a list of names
+    output: model;
+    populateProjTable is called once a new project is added. It creates a two-
+    column table that includes the names of the students in the project and the
+    number of units each student is registered for. 
+    """
+    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
+    row=0
+    for name in names:
+        units=db.stuCall(name, "Units")
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(units))
+        row+=1
+    return model
+#--------------------------------------DONE----------------------------------
 def projComboBoxFill(dialog):
     """
     input: dialog containing the combo box
@@ -231,7 +249,8 @@ def projComboBoxFill(dialog):
     for name in names:
         combo.addItem(name)
     return combo
-        
+
+#--------------------------------------DONE----------------------------------
 def onChanged(self):
     """
     onChanged is called when the value of the SpinBox in the add new project
@@ -253,7 +272,7 @@ def onChanged(self):
         combo=projComboBoxFill(ui.dialog)
         form.addRow(combo)
     
-
+#--------------------------------------DONE----------------------------------
 def addNewProject(self):
     """
     addNewProject handles the events that need to happen when we add a new
@@ -286,20 +305,10 @@ def addNewProject(self):
     buttonBox.accepted.connect(accepted)
     buttonBox.accepted.connect(ui.dialog.accept)#so it closes when ok pressed
     buttonBox.rejected.connect(ui.dialog.reject)
-
-    # Li Zhao 04/23
-    
-    #groAdd(le, value=le)
-    #groStuAdd(le, name1)
-    #groStuAdd(le, name1)
-    #groStuAdd(le, name1)
     
     ui.dialog.exec_()
     
-    # Li Zhao 04/23
-    #feedback = projectFeedback.getText()
-    #groCommentMod(projName, projName, feedback)
-        
+#--------------------------------------DONE----------------------------------
 def accepted():
     """
     accepted handles the events that need to happen once we have the info
@@ -355,8 +364,8 @@ def accepted():
     feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
-    #TODO: Get this from DB
-        
+
+#--------------------------------------DONE----------------------------------
 def addTodaysDate(self):
     """
     addTodaysDate is called when the user clicks the Add Date button on the
@@ -381,7 +390,7 @@ def addTodaysDate(self):
             ui.attendanceTable.setItem(i,colnum,QTableWidgetItem("Y"))
 
         
-        
+#--------------------------------------DONE----------------------------------
 def populateRosterFromDB(model,names):
     """
     input: model for the roster tableView and the list of student names.
@@ -395,7 +404,7 @@ def populateRosterFromDB(model,names):
         model.setItem(row,1,QStandardItem(emails[row]))
         model.setItem(row,2,QStandardItem(units[row]))
     
-
+#--------------------------------------DONE----------------------------------
 def populateAttendanceFromDB(names):
     """
     input: list of student names.
@@ -432,7 +441,7 @@ def populateAttendanceFromDB(names):
                 
     return table
 
-
+#--------------------------------------DONE----------------------------------
 def populateGradesFromDB(names):
     """
     input: list of student names
@@ -458,6 +467,7 @@ def populateGradesFromDB(names):
         row+=1
     return table
 
+#--------------------------------------TODO----------------------------------
 def export():
     """ export saves the student name and final grades into a excel file"""
     names = db.stuMassCall("Name")
@@ -496,7 +506,7 @@ def export():
             
             
         
-    
+#--------------------------------------TODO----------------------------------
 if __name__=="__main__":
     app = QApplication(sys.argv)
     window = QMainWindow()
