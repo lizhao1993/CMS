@@ -207,6 +207,24 @@ def populateProjTable(model,names):
         row+=1
     return model
 
+def populateFeedTable(model,names):
+    """
+    input: model for the student in project table view and a list of names
+    output: model;
+    populateProjTable is called once a new project is added. It creates a two-
+    column table that includes the names of the students in the project and the
+    number of units each student is registered for. 
+    """
+    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
+    row=0
+    for name in names:
+        units=db.stuCall(name, "Units")
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(units))
+        row+=1
+    return model
+
 def projComboBoxFill(dialog):
     """
     input: dialog containing the combo box
@@ -260,10 +278,8 @@ def addNewProject(self):
     form = ui.form
     #Get the info from the dialog window
     form.addRow(QLabel("Enter project name and students."))
-    fields = []
     le = QLineEdit(ui.dialog) #will contain the user input for project names
     form.addRow("Project Name",le)
-    fields.append(le)
     #user inputs for the students
     ui.numStudents = QSpinBox(ui.dialog)
     ui.numStudents.setRange(1,10)
@@ -274,7 +290,8 @@ def addNewProject(self):
         QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
         Qt.Horizontal, ui.dialog)
     form.addRow(buttonBox)
-    buttonBox.accepted.connect(ui.dialog.accept)
+    buttonBox.accepted.connect(accepted)
+    buttonBox.accepted.connect(ui.dialog.accept)#so it closes when ok pressed
     buttonBox.rejected.connect(ui.dialog.reject)
 
     # Li Zhao 04/23
@@ -284,20 +301,34 @@ def addNewProject(self):
     #groStuAdd(le, name1)
     #groStuAdd(le, name1)
     
-    result = ui.dialog.exec_()
+    ui.dialog.exec_()
     
     # Li Zhao 04/23
     #feedback = projectFeedback.getText()
     #groCommentMod(projName, projName, feedback)
         
-def accepted(self):
+def accepted():
     """
     accepted handles the events that need to happen once we have the info
     about the project and the students. It gets the Project's name and creates
     a tableView for the students' information and a tableView for the feedback
     on the project. It makes calls to populateProjTable and populateFeedTable.
     """
-    projName = fields[0].text()
+    form=ui.form
+    rows=form.count()
+    print(rows)
+    fields=[]#contains names of students
+
+    projNameObj=form.itemAt(2)#returns QLayoutItem
+    projName=projNameObj.widget()#should be lineEdit
+    projName=projName.text()
+
+    for i in range(6,rows):#starts at item 6 in row 4
+        layoutObj=form.itemAt(i)
+        objWidget=layoutObj.widget()
+        comboText=objWidget.currentText()
+        fields.append(comboText)
+    
     numPages = ui.toolBox.count() #the number of existing projects
     combo = ui.chooseProject
     #set up the page to display project data
@@ -310,20 +341,24 @@ def accepted(self):
     projectFeedback = QTableView(page)
     projectFeedback.setGeometry(QRect(0, 150, 260, 150))
     projectFeedback.setObjectName("projFeedback_"+str(numPages))
+    
     #add page to UI & to comboBox
     ui.toolBox.addItem(page,projName)
     combo.addItem(projName)
+    
     #create model for student & units:
-##    model=QStandardItemModel(len(stuNames),2)
-##    model=populateProjTable(model,stuNames)
-##    students.show()
-##    students.setModel(model)
-##    #create model for project feedback & dates
-##    feedmodel=QStandardItemModel(len(stuNames),2)
-##    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
-##    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
-##    projectFeedback.show()
-##    projectFeedback.setModel(feedmodel)
+    model=QStandardItemModel(len(fields),2)
+    model=populateProjTable(model,fields)
+    students.show()
+    students.setModel(model)
+    
+    #create model for project feedback & dates
+    feedmodel=QStandardItemModel(1,2)
+    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
+    projectFeedback.show()
+    projectFeedback.setModel(feedmodel)
+    #TODO: Get this from DB
         
 def addTodaysDate(self):
     """
