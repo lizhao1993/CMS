@@ -1,10 +1,7 @@
-#TODOs: getRoster(), addNewProject()
+#TODOs: getRoster()
 #TODO: Get feedback working
 #TODO: Export functionality
 #TODO: New semester/year functionality
-
-
-
 
 import sys
 import os.path
