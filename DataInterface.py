@@ -208,7 +208,7 @@ class DataInterface:
         slist = student.getchildren()
 
         for x in range(0, len(slist)):
-            if(slist[x] in dateList):
+            if(slist[x].tag in dateList):
                 if(slist[x].attrib["info"] == "E"):
                     student.find("Number_of_Excused").attrib["info"] = student.find("Number_of_Excused").attrib["info"] + 1
                 else:
