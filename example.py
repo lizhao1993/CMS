@@ -293,20 +293,20 @@ def addProjectTables(projName):
     numPages = ui.toolBox.count() #the number of existing projects
     combo = ui.chooseProject
     #set up the page to display project data
-    page = QWidget()
-    page.setGeometry(QRect(0,0,100,30))
-    page.setObjectName(projName)
-    students = QTableView(page)
-    students.setGeometry(QRect(0, 0, 260, 140))
-    students.setObjectName("stuInProject_"+str(numPages))
-    projectFeedback = QTableView(page)
-    projectFeedback.setGeometry(QRect(0, 150, 260, 150))
-    projectFeedback.setObjectName("projFeedback_"+str(numPages))
+    ui.page = QWidget()
+    ui.page.setGeometry(QRect(0,0,100,30))
+    ui.page.setObjectName(projName)
+    ui.students = QTableView(ui.page)
+    ui.students.setGeometry(QRect(0, 0, 260, 140))
+    ui.students.setObjectName("students_"+projName)
+    ui.projectFeedback = QTableView(ui.page)
+    ui.projectFeedback.setGeometry(QRect(0, 150, 260, 150))
+    ui.projectFeedback.setObjectName("projFeedback_"+projName)
     
     #add page to UI & to comboBox
-    ui.toolBox.addItem(page,projName)
+    ui.toolBox.addItem(ui.page,projName)
     combo.addItem(projName)
-    return [students,projectFeedback]
+    return [ui.students,ui.projectFeedback]
     
 #--------------------------------------DONE----------------------------------
 def accepted():
@@ -351,6 +351,25 @@ def accepted():
     feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
+
+#--------------------------------------TODO----------------------------------
+def submitFeedback(self):
+    proj=ui.chooseProject.currentText()#get project name from ComboBox
+    ddate=ui.projectDateEdit.date()#get date from DateEdit
+    ddate=ddate.toString()
+    points=ui.weeklyPoints.currentText()#get weekely points from ComboBox
+    text=ui.feedBackText.toPlainText()#get text from TextEdit
+
+    project=ui.page.findChild(QTableView,"projFeedback_"+proj)#should return a tableView
+    feedModel=project.model()
+    toAdd=[QStandardItem(ddate),QStandardItem(text)]
+    if feedModel==None:
+        feedModel=QStandardItemModel()
+    feedModel.appendRow(toAdd)
+    project.setModel(feedModel)
+    project.show()
+    #add comment to group
+    #add weekly points to group    
 
 #--------------------------------------DONE----------------------------------
 def addTodaysDate(self):
@@ -506,7 +525,7 @@ if __name__=="__main__":
         db = DataInterface.DataInterface(filename)
         
         names = db.stuMassCall("Name")
-        
+        #Roster, Attendance, and Grades all get filled here:
         model = QStandardItemModel(len(names),3)
         model.setHorizontalHeaderItem(0, QStandardItem("Name"))
         model.setHorizontalHeaderItem(1, QStandardItem("Email"))
@@ -517,7 +536,8 @@ if __name__=="__main__":
         
         attendanceTable = populateAttendanceFromDB(names)
         gradesTable = populateGradesFromDB(names)
-
+        
+        #Project stuff gets filled here:
         groups=db.findAllGroups()#contains the project names
         for group in groups:
             tables=addProjectTables(group)
@@ -532,6 +552,9 @@ if __name__=="__main__":
             studentModel=populateProjTable(studentModel,studentsInGroup)
             students.setModel(studentModel)
             students.show()
+        ui.weeklyPoints.addItem("1")
+        ui.weeklyPoints.addItem("2")
+        ui.weeklyPoints.addItem("3")
 
             
     else:
@@ -545,6 +568,7 @@ if __name__=="__main__":
     ui.attendanceTable.cellChanged.connect(cellChangedAttendance)
     ui.gradesTable.cellChanged.connect(cellChangedGrades)    
     ui.export_2.clicked.connect(export)
+    ui.submitFeedback.clicked.connect(submitFeedback)
 
     ui
 
