@@ -159,7 +159,7 @@ class DataInterface:
     def findAssignDate(self, sname, adname):
 
         student = self.findStudent(sname)
-        path = ".//AssignDate[@name='" + adname + "']'"
+        path = ".//AssignDate[@name='" + adname + "']"
         return student.find(path)
 
     def stuSort(self, vlist):
@@ -285,7 +285,7 @@ class DataInterface:
             return False
 
         for x in range(0, len(slist)):
-            path = ".//AssignDate[@name ='" + header + "']'"
+            path = ".//AssignDate[@name ='" + header + "']"
             slist[x].find(path).attrib["info"] = vlist[x]
 
         return True
@@ -328,7 +328,7 @@ class DataInterface:
 
     def stuMassAssignDateCall(self, header):
 
-        path = ".//AssignDate[@name='" + header + "']'"
+        path = ".//AssignDate[@name='" + header + "']"
         students = self.data.findall(path)
 
         vlist = []
@@ -374,7 +374,7 @@ class DataInterface:
 
         stulist = self.data.find("Students").getchildren()
         for x in range(0, len(stulist)):
-            path = ".//AssignDate[@name='" + target + "']'"
+            path = ".//AssignDate[@name='" + target + "']"
             if (stulist[x].find(path)):
                 stulist[x].find(path).attrib["name"] = name
             else:
@@ -454,13 +454,13 @@ class DataInterface:
     def groMod(self, name, header, value):
 
         group = self.findGroup(name)
-        path = ".//WeekGrade[@name='" + header + "']'"
+        path = ".//WeekGrade[@name='" + header + "']"
         group.find(path).attrib["info"] = value
 
     def groCall(self, name, header):
 
         group = self.findGroup(name)
-        path = ".//WeekGrade[@name='" + header + "']'"
+        path = ".//WeekGrade[@name='" + header + "']"
         return group.find(path).attrib["info"]
 
     def groAdd(self, group, header, value=""):
@@ -494,13 +494,13 @@ class DataInterface:
     def groCommentMod(self, name, header, comment):
 
         group = self.findGroup(name)
-        path = ".//WeekGrade[@name='" + header + "']'"
+        path = ".//WeekGrade[@name='" + header + "']"
         group.find(path).text = comment
 
     def groCommentCall(self, name, header):
 
         group = self.findGroup(name)
-        path = ".//WeekGrade[@name='" + header + "']'"
+        path = ".//WeekGrade[@name='" + header + "']"
         return group.find(path).text
 
 
