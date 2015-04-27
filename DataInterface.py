@@ -156,6 +156,11 @@ class DataInterface:
         path = ".//Name[@info='" + name + "']"
         return self.data.find(path)
 
+    def findAssignDate(self, sname, adname):
+
+        student = self.findStudent(sname)
+        path = ".//AssignDate[@name='" + adname + "']'"
+        return student.find(path)
 
     def stuSort(self, vlist):
         """ Takes a list of student elements, removes all dropped or
@@ -189,18 +194,13 @@ class DataInterface:
         """ Changes the attribute of the given header category within
         the given student element. """
 
-        student = self.findStudent(name)
-        print(header)
-        print(name)
-        print(value)
-        student.find(header).attrib["info"] = value
+        self.findAssignDate(name,header).attrib["info"] = value
 
     def stuCall(self, name, header):
         """ Gets the attribute of the given header category within
         the given student element. """
 
-        student = self.findStudent(name)
-        return student.find(header).attrib["info"]
+        return self.findAssignDate(name,header).attrib["info"]
 
     def stuAbsence(self, name):
         """  """
@@ -213,7 +213,7 @@ class DataInterface:
         excused = 0
 
         for x in range(0, len(slist)):
-            if(slist[x].tag in dateList):
+            if(slist[x].attrib["name"] in dateList):
                 if(slist[x].attrib["info"] == "E"):
                     excused += 1
                 else:
@@ -239,7 +239,9 @@ class DataInterface:
         clist = students.getchildren()
 
         for x in range(0, len(clist)):
-            SubElement(clist[x], header).attrib["info"] = value
+            student = SubElement(clist[x], "AssignDate")
+            student.attrib["info"] = value
+            student.attrib["name"] = header
 
 
     def stuQuery(self, header):
@@ -251,7 +253,7 @@ class DataInterface:
 
 
     def stuMassMod(self, header, vlist):
-        """ Changes all values of the given header to the corresponding
+        """ Changes all values of the given DEFAULT header to the corresponding
         values of a list of values. This list must
         include all non-flagged, non-dropped students and must be
         arranged in alphabetical order by student
@@ -267,6 +269,20 @@ class DataInterface:
 
         for x in range(0, len(slist)):
             slist[x].find(header).attrib["info"] = vlist[x]
+
+        return True
+
+    def stuMassAssignDateMod(self, header, vlist):
+
+        slist = self.data.find("Students").getchildren()
+        slist = self.stuSort(slist)
+
+        if ((len(slist) != len(vlist)) or (header in self.headerList)):
+            return False
+
+        for x in range(0, len(slist)):
+            path = ".//AssignDate[@name ='" + header + "']'"
+            slist[x].find(path).attrib["info"] = vlist[x]
 
         return True
 
@@ -289,14 +305,13 @@ class DataInterface:
 
     def stuMassCall(self, header):
         """ Returns a list of the values each student has of a given
-        category with the header as a tag. This
+        category with the DEFAULT header as a tag. This
         list is in alphabetical order and only includes non-dropped,
         non-flagged students. If the given
         header is not the tag of a category, then the function will
         return an empty string. """
 
-        path = ".//" + header + ""
-        students = self.data.findall(path)
+        students = self.data.findall(header)
 
         vlist = []
         headers = self.deflist + self.headerList
@@ -307,6 +322,19 @@ class DataInterface:
             vlist.append(students[x].attrib["info"])
         return vlist
 
+    def stuMassAssignDateCall(self, header):
+
+        path = ".//AssignDate[@name='" + header + "']'"
+        students = self.data.findall(path)
+
+        vlist = []
+        headers = self.deflist + self.headerList
+
+        if (header not in headers):
+            return []
+        for x in range(0, len(students)):
+            vlist.append(students[x].attrib["info"])
+        return vlist
 
     def stuRec(self, name):
         """ Reconciles a student's categories with the database
@@ -316,16 +344,20 @@ class DataInterface:
         student = self.findStudent(name)
         catlist = student.getchildren()
 
-        if (len(catlist) == (len(self.headerList) + 6)): return True
+        if (len(catlist) == (len(self.headerList) + 9)): return True
 
         localheaders = []
         for x in range(0, len(catlist)):
-            if (catlist[x].tag not in self.deflist):
+            if (catlist[x].attrib["name"]):
                 localheaders.append(catlist[x].tag)
 
         for x in range(0, len(self.headerList)):
             if (self.headerList[x] not in localheaders):
-                SubElement(student, self.headerList[x])
+                cat = SubElement(student, "AssignDate")
+                cat.attrib["name"] =  self.headerList[x]
+                cat.attrib["info"] = ""
+
+        return True
 
 
     def stuCatMod(self, target, name):
@@ -338,10 +370,13 @@ class DataInterface:
 
         stulist = self.data.find("Students").getchildren()
         for x in range(0, len(stulist)):
-            if (stulist[x].find(target)):
-                stulist[x].find(target).tag = name
+            path = ".//AssignDate[@name='" + target + "']'"
+            if (stulist[x].find(path)):
+                stulist[x].find(path).attrib["name"] = name
             else:
-                SubElement(stulist[x], name)
+                cat = SubElement(stulist[x], "AssignDate")
+                cat.attrib["name"] = name
+                cat.attrib["info"] = ""
 
         return True
 
@@ -358,7 +393,7 @@ class DataInterface:
         #assigns = self.findHW()
         #totalpoints = 0
         #for x in range(0, len(assignlist)):
-        #    if (assignlist[x].tag in assigns):
+        #    if (assignlist[x].attrib["name"] in assigns):
         #        totalpoints += int(assignlist[x].attrib["info"])
         #if (totalpoints < 150): grade = "Fail"
 
@@ -415,12 +450,14 @@ class DataInterface:
     def groMod(self, name, header, value):
 
         group = self.findGroup(name)
-        group.find(header).attrib["info"] = value
+        path = ".//WeekGrade[@name='" + header + "']'"
+        group.find(path).attrib["info"] = value
 
     def groCall(self, name, header):
 
         group = self.findGroup(name)
-        return group.find(header).attrib["info"]
+        path = ".//WeekGrade[@name='" + header + "']'"
+        return group.find(path).attrib["info"]
 
     def groAdd(self, header, value=""):
 
@@ -429,7 +466,8 @@ class DataInterface:
         clist = groups.getchildren()
 
         for x in range(0, len(clist)):
-            SubElement(clist[x], header).attrib["info"] = value
+            cat = SubElement(clist[x], "WeekGrade").attrib["info"] = value
+            cat.attrib["name"] = header
 
     def groStuAdd(self, gname, sname):
 
@@ -456,12 +494,14 @@ class DataInterface:
     def groCommentMod(self, name, header, comment):
 
         group = self.findGroup(name)
-        group.find(header).text = comment
+        path = ".//WeekGrade[@name='" + header + "']'"
+        group.find(path).text = comment
 
     def groCommentCall(self, name, header):
 
         group = self.findGroup(name)
-        return group.find(header).text
+        path = ".//WeekGrade[@name='" + header + "']'"
+        return group.find(path).text
 
 
 
