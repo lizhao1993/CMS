@@ -5,6 +5,7 @@
 
 import sys
 import os.path
+import ast
 import loadworkbook
 import DataInterface
 import xml.etree.ElementTree as ET
@@ -195,27 +196,9 @@ def populateProjTable(model,names):
         row+=1
     return model
 
-#--------------------------------------TODO----------------------------------
-def populateProjTableFromDB(model,names):
-     """
-    input: model for the student in project table view and a list of names
-    output: model;
-    populateProjTable is called once a new project is added. It creates a two-
-    column table that includes the names of the students in the project and the
-    number of units each student is registered for. 
-    """
-    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
-    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
-    row=0
-    for name in names:
-        units=db.stuCall(name, "Units")
-        model.setItem(row,0,QStandardItem(name))
-        model.setItem(row,1,QStandardItem(units))
-        row+=1
-    return model
 
 #--------------------------------------TODO----------------------------------
-def populateFeedTableFromDB(model,names):
+def populateFeedTableFromDB(model,groups):
     """
     input: model for the student in project table view and a list of names
     output: model;
@@ -272,8 +255,8 @@ def onChanged(self):
 #--------------------------------------DONE----------------------------------
 def addNewProject(self):
     """
-    addNewProject handles the events that need to happen when we add a new
-    project.
+    addNewProject handles the events that need to happen when we click to
+    add a new project.
     It creates a dialog for the user to input the name of the project and a
     SpinBox for the user to input the number of students in the projects (see
     onChanged). If the user clicks "OK" in the dialog, accepted is called.
@@ -304,6 +287,26 @@ def addNewProject(self):
     buttonBox.rejected.connect(ui.dialog.reject)
     
     ui.dialog.exec_()
+
+#--------------------------------------DONE----------------------------------
+def addProjectTables(projName):
+    numPages = ui.toolBox.count() #the number of existing projects
+    combo = ui.chooseProject
+    #set up the page to display project data
+    page = QWidget()
+    page.setGeometry(QRect(0,0,100,30))
+    page.setObjectName(projName)
+    students = QTableView(page)
+    students.setGeometry(QRect(0, 0, 260, 140))
+    students.setObjectName("stuInProject_"+str(numPages))
+    projectFeedback = QTableView(page)
+    projectFeedback.setGeometry(QRect(0, 150, 260, 150))
+    projectFeedback.setObjectName("projFeedback_"+str(numPages))
+    
+    #add page to UI & to comboBox
+    ui.toolBox.addItem(page,projName)
+    combo.addItem(projName)
+    return [students,projectFeedback]
     
 #--------------------------------------DONE----------------------------------
 def accepted():
@@ -332,22 +335,9 @@ def accepted():
 
     db.save()
     
-    numPages = ui.toolBox.count() #the number of existing projects
-    combo = ui.chooseProject
-    #set up the page to display project data
-    page = QWidget()
-    page.setGeometry(QRect(0,0,100,30))
-    page.setObjectName(projName)
-    students = QTableView(page)
-    students.setGeometry(QRect(0, 0, 260, 140))
-    students.setObjectName("stuInProject_"+str(numPages))
-    projectFeedback = QTableView(page)
-    projectFeedback.setGeometry(QRect(0, 150, 260, 150))
-    projectFeedback.setObjectName("projFeedback_"+str(numPages))
-    
-    #add page to UI & to comboBox
-    ui.toolBox.addItem(page,projName)
-    combo.addItem(projName)
+    tables=addProjectTables(projName)
+    students=tables[0]
+    projectFeedback=tables[1]
     
     #create model for student & units:
     model=QStandardItemModel(len(fields),2)
@@ -514,7 +504,9 @@ if __name__=="__main__":
     
     if os.path.isfile(filename):
         db = DataInterface.DataInterface(filename)
+        
         names = db.stuMassCall("Name")
+        
         model = QStandardItemModel(len(names),3)
         model.setHorizontalHeaderItem(0, QStandardItem("Name"))
         model.setHorizontalHeaderItem(1, QStandardItem("Email"))
@@ -525,6 +517,23 @@ if __name__=="__main__":
         
         attendanceTable = populateAttendanceFromDB(names)
         gradesTable = populateGradesFromDB(names)
+
+        groups=db.findAllGroups()#contains the project names
+        for group in groups:
+            tables=addProjectTables(group)
+            students=tables[0]
+            projectFeedback=tables[1]
+            
+            studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
+            studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
+                            #the string representation of the list into an
+                            #actual list
+            studentModel=QStandardItemModel(len(studentsInGroup),2)
+            studentModel=populateProjTable(studentModel,studentsInGroup)
+            students.setModel(studentModel)
+            students.show()
+
+            
     else:
         db = DataInterface.DataInterface()
 	

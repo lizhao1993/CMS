@@ -391,6 +391,14 @@ class DataInterface:
         SubElement(group, "Units").attrib["info"] = "0"
         SubElement(group, "Students").attrib["info"] = []
 
+    def findAllGroups(self):
+        groups = self.data.findall(".//Group")
+        groupNames=[]
+        
+        for i in range(0,len(groups)):
+            groupNames.append(groups[i].attrib["info"])
+        return groupNames
+
     def findGroup(self, name):
         path = ".//Group[@info='" + name + "']"
         return self.data.find(path)
