@@ -216,15 +216,16 @@ class DataInterface:
         excused = 0
 
         for x in range(0, len(slist)):
-            if(slist[x].attrib["name"] in dateList):
-                if(slist[x].attrib["info"] == "E"):
-                    excused += 1
-                else:
-                    if(slist[x].attrib["info"] != "Y"):
-                        absence += 1
+            if(slist[x].tag == "AssignDate"):
+                if(slist[x].attrib["name"] in dateList):
+                    if(slist[x].attrib["info"] == "E"):
+                        excused += 1
+                    else:
+                        if(slist[x].attrib["info"] != "Y"):
+                            absence += 1
 
-            student.find("Number_of_Excused").attrib["info"] = str(excused)
-            student.find("Number_of_Absences").attrib["info"] = str(absence)
+        student.find("Number_of_Excused").attrib["info"] = str(excused)
+        student.find("Number_of_Absences").attrib["info"] = str(absence)
 
 
     def stuAdd(self, header, value=""):
