@@ -352,7 +352,7 @@ def accepted():
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
 
-#--------------------------------------TODO----------------------------------
+#--------------------------------------DONE?----------------------------------
 def submitFeedback(self):
     proj=ui.chooseProject.currentText()#get project name from ComboBox
     ddate=ui.projectDateEdit.date()#get date from DateEdit
@@ -363,13 +363,16 @@ def submitFeedback(self):
     project=ui.page.findChild(QTableView,"projFeedback_"+proj)#should return a tableView
     feedModel=project.model()
     toAdd=[QStandardItem(ddate),QStandardItem(text)]
+    
     if feedModel==None:
         feedModel=QStandardItemModel()
     feedModel.appendRow(toAdd)
     project.setModel(feedModel)
     project.show()
-    #add comment to group
-    #add weekly points to group    
+    
+    db.groAdd(proj,ddate,points)#add weekly points and date of feedback
+    db.groCommentMode(proj,ddate,text)
+    db.save()    
 
 #--------------------------------------DONE----------------------------------
 def addTodaysDate(self):
