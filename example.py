@@ -198,17 +198,31 @@ def populateProjTable(model,names):
 
 
 #--------------------------------------TODO----------------------------------
-def populateFeedTableFromDB(model,groups):
+def populateFeedTableFromDB(model,group):
     """
-    input: model for the student in project table view and a list of names
+    input: model for the project feedback table view and a list of names
     output: model;
     populateProjTable is called once a new project is added. It creates a two-
     column table that includes the names of the students in the project and the
     number of units each student is registered for. 
     """
-    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
-    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
+    model.setHorizontalHeaderItem(0,QStandardItem("Date"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    model.setHorizontalHeaderItem(2,QStandardItem("Comment"))
     row=0
+
+    #get the feedback dates
+    groupElement=db.findGroup(group)
+    datesElements=groupElement.findall(".//WeekGrade")#gets all the fb dates
+    dates=[]
+    for date in datesElements:
+        dates.append(date.attrib["name"])#gets the names of the dates
+        
+    points=[]
+    for date in dates:
+        points.append(db.groCall(group,date))
+
+        
     for name in names:
         units=db.stuCall(name, "Units")
         model.setItem(row,0,QStandardItem(name))
