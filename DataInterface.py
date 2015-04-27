@@ -462,15 +462,11 @@ class DataInterface:
         path = ".//WeekGrade[@name='" + header + "']'"
         return group.find(path).attrib["info"]
 
-    def groAdd(self, header, value=""):
+    def groAdd(self, group, header, value=""):
 
-        self.groHeaderList.append(header)
-        groups = self.data.find("Groups")
-        clist = groups.getchildren()
-
-        for x in range(0, len(clist)):
-            cat = SubElement(clist[x], "WeekGrade").attrib["info"] = value
-            cat.attrib["name"] = header
+        group = self.findGroup(group)
+        cat = SubElement(group, "WeekGrade").attrib["info"] = value
+        cat.attrib["name"] = header
 
     def groStuAdd(self, gname, sname):
 
