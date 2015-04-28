@@ -20,65 +20,10 @@ from openpyxl import Workbook
 from openpyxl.compat import range
 from openpyxl.cell import get_column_letter
 
-#--------------------------------------DONE----------------------------------
-def populateTableView(model,students):
-    """ This is a function for populating the roster;
-    populateTableView takes in a nested list of students with their info,
-    a model (standardItemModel), and adds data to the TableView; it then
-    returns the model.
-    This method also adds students to the database so it should only be
-    called when the database is empty """    
-    row=0;
-    # Add students to tableView
-    for student in students:
-        name = student[0]+" "+student[1]
-        email = student[2]
-        units = str(student[3])
-        db.stuMod(name,"Email",email)
-        db.stuMod(name,"Units",units)
-        model.setItem(row,0,QStandardItem(name))
-        model.setItem(row,1,QStandardItem(email))
-        model.setItem(row,2,QStandardItem(units))
-        row+=1        
-    db.save()
-    return model
 
-#--------------------------------------DONE----------------------------------
-def populateAttendance(students):
-    """ populateattendanceTable takes in a nested list of students with their info
-    and adds data to the (default) attendanceTable; it is called when a new
-    roster is uploaded """    
-    table = ui.attendanceTable
-    table.setColumnCount(2)
-    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    table.setHorizontalHeaderItem(1,QTableWidgetItem("Total Unexcused"))
-    table.setRowCount(len(students))
-    row=0;
-    for student in students:
-        name = student[0]+" "+student[1]
-        db.addStudent(name)
-        absences = db.stuCall(name,"Number_of_Absences")
-        table.setItem(row,0,QTableWidgetItem(name))
-        table.setItem(row,1,QTableWidgetItem(absences))
-        row+=1        
-    return table
-
-#--------------------------------------DONE----------------------------------
-def populateGrades(students):
-    """ populateGrades takes in a nested list of students and adds their names
-    to the first column in the grades table; it is called when a new roster
-    is uploaded """    
-    table = ui.gradesTable
-    table.setColumnCount(1)
-    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
-    table.setRowCount(len(students))
-    row=0;
-    for student in students:
-        name1 = QTableWidgetItem(student[0]+" "+student[1])
-        table.setItem(row,0,name1)
-        row+=1
-    return table
-
+#############################################################################
+#                  Roster, Attedance, Grades for empty DB                   #
+#############################################################################
 #--------------------------------------TODO----------------------------------
 def getRoster(self):
     #TODO: Check if the db already has stuff in it and if so, do a
@@ -107,6 +52,69 @@ def getRoster(self):
     
     db.save()
 
+
+def populateTableView(model,students):
+    """ This is a function for populating the roster;
+    populateTableView takes in a nested list of students with their info,
+    a model (standardItemModel), and adds data to the TableView; it then
+    returns the model.
+    This method also adds students to the database so it should only be
+    called when the database is empty """    
+    row=0;
+    # Add students to tableView
+    for student in students:
+        name = student[0]+" "+student[1]
+        email = student[2]
+        units = str(student[3])
+        db.stuMod(name,"Email",email)
+        db.stuMod(name,"Units",units)
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(email))
+        model.setItem(row,2,QStandardItem(units))
+        row+=1        
+    db.save()
+    return model
+
+
+def populateAttendance(students):
+    """ populateattendanceTable takes in a nested list of students with their info
+    and adds data to the (default) attendanceTable; it is called when a new
+    roster is uploaded """    
+    table = ui.attendanceTable
+    table.setColumnCount(2)
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setHorizontalHeaderItem(1,QTableWidgetItem("Total Unexcused"))
+    table.setRowCount(len(students))
+    row=0;
+    for student in students:
+        name = student[0]+" "+student[1]
+        db.addStudent(name)
+        absences = db.stuCall(name,"Number_of_Absences")
+        table.setItem(row,0,QTableWidgetItem(name))
+        table.setItem(row,1,QTableWidgetItem(absences))
+        row+=1        
+    return table
+
+
+def populateGrades(students):
+    """ populateGrades takes in a nested list of students and adds their names
+    to the first column in the grades table; it is called when a new roster
+    is uploaded """    
+    table = ui.gradesTable
+    table.setColumnCount(1)
+    table.setHorizontalHeaderItem(0,QTableWidgetItem("Name"))
+    table.setRowCount(len(students))
+    row=0;
+    for student in students:
+        name1 = QTableWidgetItem(student[0]+" "+student[1])
+        table.setItem(row,0,name1)
+        row+=1
+    return table
+
+
+#############################################################################
+#                  Attendance Changes and Adding Dates                      #
+#############################################################################
 #--------------------------------------DONE----------------------------------
 def cellChangedAttendance(self):
     """
@@ -118,7 +126,7 @@ def cellChangedAttendance(self):
     col = ui.attendanceTable.currentColumn()
     row = ui.attendanceTable.currentRow()    
     #get student's name
-    if col!=0:
+    if col!=0 && col!=1:#can't edit first two columns
         name = ui.attendanceTable.item(row,0)
         if name:
             name = name.text()
@@ -128,11 +136,36 @@ def cellChangedAttendance(self):
                 item = ui.attendanceTable.currentItem()
                 if item:
                     item = item.text()
+                    db.stuMod(name,date,item,True)
                     db.stuAbsence(name)
-                    db.stuMod(name,date,item)                  
-                    
                     db.save()
 
+def addTodaysDate(self):
+    """
+    addTodaysDate is called when the user clicks the Add Date button on the
+    attendance tab. It creates an InputDialog that get's the value of the date
+    the user wishes to add to the attendance table; it adds the date to the
+    database under Dates and to each student with the value of the date to "Y" 
+    (default).
+    """
+    inputDialog = QInputDialog()
+    today, ok = inputDialog.getText(ui.add_assignment,"Add Date",
+                                   "Enter Date:")
+    if ok:
+        colnum = ui.attendanceTable.columnCount()
+        ui.attendanceTable.insertColumn(colnum)
+        ui.attendanceTable.setHorizontalHeaderItem(colnum,QTableWidgetItem(today))
+        db.stuAdd(today,"Y")
+        db.addDate(today)        
+        db.save()
+        
+        rows = ui.attendanceTable.rowCount()
+        for i in range(0,rows):
+            ui.attendanceTable.setItem(i,colnum,QTableWidgetItem("Y"))
+
+#############################################################################
+#                  Grades Changes and Adding Assignments                    #
+#############################################################################
 #--------------------------------------DONE----------------------------------
 def cellChangedGrades(self):
     """
@@ -156,7 +189,7 @@ def cellChangedGrades(self):
                     db.stuMod(name,header,item)
                     db.save()
                     
-#--------------------------------------DONE----------------------------------
+
 def showDialog(self):
     """
     input: none; output: none
@@ -176,54 +209,10 @@ def showDialog(self):
         db.stuAdd(text) #add assignment as tag in each student
         db.addAssignment(text) #add to list of assignments
         db.save()
-        
-#--------------------------------------DONE----------------------------------
-def populateProjTable(model,names):
-    """
-    input: model for the student in project table view and a list of names
-    output: model;
-    populateProjTable is called once a new project is added. It creates a two-
-    column table that includes the names of the students in the project and the
-    number of units each student is registered for. 
-    """
-    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
-    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
-    row=0
-    for name in names:
-        units=db.stuCall(name, "Units")
-        model.setItem(row,0,QStandardItem(name))
-        model.setItem(row,1,QStandardItem(units))
-        row+=1
-    return model
 
-
-#--------------------------------------TODO----------------------------------
-def populateFeedTableFromDB(model,group):
-    """
-    input: model for the project feedback table view and a list of names
-    output: model;
-    populateProjTable is called once a new project is added. It creates a two-
-    column table that includes the names of the students in the project and the
-    number of units each student is registered for. 
-    """
-    model.setHorizontalHeaderItem(0,QStandardItem("Date"))
-    model.setHorizontalHeaderItem(1,QStandardItem("Points"))
-    model.setHorizontalHeaderItem(2,QStandardItem("Comment"))
-    #get the feedback dates
-    groupElement=db.findGroup(group)
-    datesElements=groupElement.findall(".//WeekGrade")#gets all the fb dates
-    dates=[]
-    for date in datesElements:
-        dates.append(date.attrib["name"])#gets the names of the dates
-        
-    row=0
-    for i in range(0,len(dates)):
-        model.setItem(row,0,QStandardItem(dates[i]))
-        model.setItem(row,1,QStandardItem(db.groCall(group,dates[i])))
-        model.setItem(row,2,QStandardItem(db.groCommentCall(group,dates[i])))
-        row+=1
-        
-    return model
+#############################################################################
+#                           Add New Project Dialog                          #
+#############################################################################
 #--------------------------------------DONE----------------------------------
 def projComboBoxFill(dialog):
     """
@@ -239,7 +228,7 @@ def projComboBoxFill(dialog):
         combo.addItem(name)
     return combo
 
-#--------------------------------------DONE----------------------------------
+
 def onChanged(self):
     """
     onChanged is called when the value of the SpinBox in the add new project
@@ -261,7 +250,7 @@ def onChanged(self):
         combo=projComboBoxFill(ui.dialog)
         form.addRow(combo)
     
-#--------------------------------------DONE----------------------------------
+
 def addNewProject(self):
     """
     addNewProject handles the events that need to happen when we click to
@@ -297,7 +286,7 @@ def addNewProject(self):
     
     ui.dialog.exec_()
 
-#--------------------------------------DONE----------------------------------
+
 def addProjectTables(projName):
     numPages = ui.toolBox.count() #the number of existing projects
     combo = ui.chooseProject
@@ -316,8 +305,27 @@ def addProjectTables(projName):
     ui.toolBox.addItem(ui.page,projName)
     combo.addItem(projName)
     return [ui.students,ui.projectFeedback]
-    
-#--------------------------------------DONE----------------------------------
+        
+
+def populateProjTable(model,names):
+    """
+    input: model for the student in project table view and a list of names
+    output: model;
+    populateProjTable is called once a new project is added. It creates a two-
+    column table that includes the names of the students in the project and the
+    number of units each student is registered for. 
+    """
+    model.setHorizontalHeaderItem(0,QStandardItem("Name"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Units"))
+    row=0
+    for name in names:
+        units=db.stuCall(name, "Units")
+        model.setItem(row,0,QStandardItem(name))
+        model.setItem(row,1,QStandardItem(units))
+        row+=1
+    return model    
+
+
 def accepted():
     """
     accepted handles the events that need to happen once we have the info
@@ -357,11 +365,14 @@ def accepted():
     #create model for project feedback & dates
     feedmodel=QStandardItemModel(0,3)
     feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
-    feedModel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Points"))
     feedmodel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
 
+#############################################################################
+#                                Feedback Box                               #
+#############################################################################
 #--------------------------------------DONE?----------------------------------
 def submitFeedback(self):
     proj=ui.chooseProject.currentText()#get project name from ComboBox
@@ -372,10 +383,13 @@ def submitFeedback(self):
 
     project=ui.page.findChild(QTableView,"projFeedback_"+proj)#should return a tableView
     feedModel=project.model()
-    toAdd=[QStandardItem(ddate),QStandardItem(text)]
+    toAdd=[QStandardItem(ddate),QStandardItem(points),QStandardItem(text)]
     
     if feedModel==None:
         feedModel=QStandardItemModel()
+        feedModel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+        feedModel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+        feedModel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
     feedModel.appendRow(toAdd)
     project.setModel(feedModel)
     project.show()
@@ -386,51 +400,39 @@ def submitFeedback(self):
 
     ui.chooseProject.setCurrentIndex(0)    
     year=date.today().year
-    print(year)
     ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
     ui.weeklyPoints.setCurrentIndex(0)
-    ui.feedBackText.clear()  
-
+    ui.feedBackText.clear()
+    
+#############################################################################
+#      Roster, Attedance, Grades, Project Feedback for non-empty DB         #
+#############################################################################
 #--------------------------------------DONE----------------------------------
-def addTodaysDate(self):
-    """
-    addTodaysDate is called when the user clicks the Add Date button on the
-    attendance tab. It creates an InputDialog that get's the value of the date
-    the user wishes to add to the attendance table; it adds the date to the
-    database under Dates and to each student with the value of the date to "Y" 
-    (default).
-    """
-    inputDialog = QInputDialog()
-    today, ok = inputDialog.getText(ui.add_assignment,"Add Date",
-                                   "Enter Date:")
-    if ok:
-        colnum = ui.attendanceTable.columnCount()
-        ui.attendanceTable.insertColumn(colnum)
-        ui.attendanceTable.setHorizontalHeaderItem(colnum,QTableWidgetItem(today))
-        db.stuAdd(today,"Y")
-        db.addDate(today)        
-        db.save()
-        
-        rows = ui.attendanceTable.rowCount()
-        for i in range(0,rows):
-            ui.attendanceTable.setItem(i,colnum,QTableWidgetItem("Y"))
-
-        
-#--------------------------------------DONE----------------------------------
-def populateRosterFromDB(model,names):
+def populateRosterFromDB():
     """
     input: model for the roster tableView and the list of student names.
     populateRosterFromDB gets the values of the students' emails and units
     and adds them to the model for each student.
     """
+    names = db.stuMassCall("Name")
     emails = db.stuMassCall("Email")
     units = db.stuMassCall("Units")
+
+    model = QStandardItemModel(len(names),3)
+    model.setHorizontalHeaderItem(0, QStandardItem("Name"))
+    model.setHorizontalHeaderItem(1, QStandardItem("Email"))
+    model.setHorizontalHeaderItem(2, QStandardItem("Units"))
+    
     for row in range(0,len(names)):
         model.setItem(row,0,QStandardItem(names[row]))
         model.setItem(row,1,QStandardItem(emails[row]))
         model.setItem(row,2,QStandardItem(units[row]))
+
+    ui.rosterView.setModel(model)
+        
+    return names
     
-#--------------------------------------DONE----------------------------------
+
 def populateAttendanceFromDB(names):
     """
     input: list of student names.
@@ -455,7 +457,7 @@ def populateAttendanceFromDB(names):
                 absences = db.stuCall(names[i],"Number_of_Absences")
                 table.setItem(i,1,QTableWidgetItem(absences))
                 #look up student's attendance on that date
-                att=db.stuCall(names[i],date)
+                att=db.stuCall(names[i],date,True)
                 table.setItem(i,col,QTableWidgetItem(att))
             col=col-1
 
@@ -464,10 +466,8 @@ def populateAttendanceFromDB(names):
             table.setItem(i,0,QTableWidgetItem(names[i]))
             absences = db.stuCall(names[i],"Number_of_Absences")
             table.setItem(i,1,QTableWidgetItem(absences))
-                
-    return table
 
-#--------------------------------------DONE----------------------------------
+
 def populateGradesFromDB(names):
     """
     input: list of student names
@@ -491,8 +491,55 @@ def populateGradesFromDB(names):
             table.setItem(row,col,QTableWidgetItem(grade))
             col+=1
         row+=1
-    return table
 
+
+def populateFeedTableFromDB(group):
+    """
+    input: model for the project feedback table view and a list of names
+    output: model;
+    populateProjTable is called once a new project is added. It creates a two-
+    column table that includes the names of the students in the project and the
+    number of units each student is registered for. 
+    """    
+    dates=db.groMassDateCall(group)
+    
+    model=QStandardItemModel(len(dates),3)
+    model.setHorizontalHeaderItem(0,QStandardItem("Date"))
+    model.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    model.setHorizontalHeaderItem(2,QStandardItem("Comment"))
+        
+    row=0
+    for i in range(0,len(dates)):
+        model.setItem(row,0,QStandardItem(dates[i]))
+        model.setItem(row,1,QStandardItem(db.groCall(group,dates[i])))#points
+        model.setItem(row,2,QStandardItem(db.groCommentCall(group,dates[i])))
+        row+=1
+        
+    return model
+
+def populateGroups(groups):
+    for group in groups:
+        tables=addProjectTables(group)
+        students=tables[0]
+        projectFeedback=tables[1]
+        
+        studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
+        studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
+                        #the string representation of the list into an
+                        #actual list
+        studentModel=QStandardItemModel(len(studentsInGroup),2)
+        studentModel=populateProjTable(studentModel,studentsInGroup)
+        students.setModel(studentModel)
+        students.show()
+        
+        feedModel=populateFeedTableFromDB(group)
+        projectFeedback.setModel(feedModel)
+        projectFeedback.show()
+
+        
+#############################################################################
+#                                      EXPORT                               #
+#############################################################################
 #--------------------------------------TODO----------------------------------
 def export():
     """ export saves the student name and final grades into a excel file"""
@@ -532,59 +579,38 @@ def export():
             
             
         
+#############################################################################
+#                                      MAIN                                 #
+#############################################################################
 #--------------------------------------TODO----------------------------------
 if __name__=="__main__":
     app = QApplication(sys.argv)
     window = QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(window)
+    
+    year=date.today().year
+    ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
+    ui.weeklyPoints.addItem("1")
+    ui.weeklyPoints.addItem("2")
+    ui.weeklyPoints.addItem("3")
 
     filename = "database.xml"
     
     if os.path.isfile(filename):
         db = DataInterface.DataInterface(filename)
-        year=date.today().year
-        print(year)
-        ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
         
-        names = db.stuMassCall("Name")
-        #Roster, Attendance, and Grades all get filled here:
-        model = QStandardItemModel(len(names),3)
-        model.setHorizontalHeaderItem(0, QStandardItem("Name"))
-        model.setHorizontalHeaderItem(1, QStandardItem("Email"))
-        model.setHorizontalHeaderItem(2, QStandardItem("Units"))
-        
-        populateRosterFromDB(model,names)
-        ui.rosterView.setModel(model)
-        
-        attendanceTable = populateAttendanceFromDB(names)
-        gradesTable = populateGradesFromDB(names)
+        names=populateRosterFromDB()
+        populateAttendanceFromDB(names)
+        populateGradesFromDB(names)
         
         #Project stuff gets filled here:
         groups=db.findAllGroups()#contains the project names
-        for group in groups:
-            tables=addProjectTables(group)
-            students=tables[0]
-            projectFeedback=tables[1]
-            projectFeedback.show()
-            
-            studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
-            studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
-                            #the string representation of the list into an
-                            #actual list
-            studentModel=QStandardItemModel(len(studentsInGroup),2)
-            studentModel=populateProjTable(studentModel,studentsInGroup)
-            students.setModel(studentModel)
-            students.show()
-            
-        ui.weeklyPoints.addItem("1")
-        ui.weeklyPoints.addItem("2")
-        ui.weeklyPoints.addItem("3")
-
+        populateGroups(groups)
+        
             
     else:
-        db = DataInterface.DataInterface()
-	
+        db = DataInterface.DataInterface()	
 
     ui.pushButton.clicked.connect(getRoster)
     ui.add_assignment.clicked.connect(showDialog)
@@ -595,7 +621,6 @@ if __name__=="__main__":
     ui.export_2.clicked.connect(export)
     ui.submitFeedback.clicked.connect(submitFeedback)
 
-    ui
 
 
     window.show()

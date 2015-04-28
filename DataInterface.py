@@ -223,6 +223,12 @@ class DataInterface:
                 else:
                     if(slist[x].attrib["info"] != "Y"):
                         absence += 1
+<<<<<<< HEAD
+=======
+
+##        if (absence>0):
+##            absence +=1
+>>>>>>> 1fdd5833573908a52ea11236190bd3e66ff8dcf2
             
         student.find("Number_of_Excused").attrib["info"] = str(excused)
         student.find("Number_of_Absences").attrib["info"] = str(absence)
@@ -323,10 +329,8 @@ class DataInterface:
         headers = self.deflist
 
         if (header not in headers):
-            print("Fail")
             return vlist
         for x in range(0, len(students)):
-            print(students[x].attrib["info"])
             vlist.append(students[x].attrib["info"])
         return vlist
 
@@ -499,6 +503,17 @@ class DataInterface:
         group = self.findGroup(name)
         path = ".//WeekGrade[@name='" + header + "']"
         return group.find(path).text
+
+    def groMassDateCall(self, gname):
+        group = self.findGroup(gname)
+        datesElements = group.findall(".//WeekGrade")
+        
+        dates=[]
+        for date in datesElements:
+            dates.append(date.attrib["name"])
+        return dates
+
+        
 
 
 
