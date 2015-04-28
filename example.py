@@ -129,7 +129,7 @@ def cellChangedAttendance(self):
                 if item:
                     item = item.text()
                     db.stuAbsence(name)
-                    db.stuMod(name,date,item)                  
+                    db.stuMod(name,date,item,True)                  
                     
                     db.save()
 
@@ -153,7 +153,7 @@ def cellChangedGrades(self):
                 item = ui.gradesTable.currentItem()#value of changed cell
                 if item:
                     item = item.text()
-                    db.stuMod(name,header,item)
+                    db.stuMod(name,header,item, True)
                     db.save()
                     
 #--------------------------------------DONE----------------------------------
@@ -438,7 +438,7 @@ def populateAttendanceFromDB(names):
                 absences = db.stuCall(names[i],"Number_of_Absences")
                 table.setItem(i,1,QTableWidgetItem(absences))
                 #look up student's attendance on that date
-                att=db.stuCall(names[i],date)
+                att=db.stuCall(names[i],date,True)
                 table.setItem(i,col,QTableWidgetItem(att))
             col=col-1
 
@@ -470,7 +470,7 @@ def populateGradesFromDB(names):
         col=1
         for hw in assignments:
             table.setHorizontalHeaderItem(col,QTableWidgetItem(hw))
-            grade = db.stuCall(name,hw) #get student's grade
+            grade = db.stuCall(name,hw, True) #get student's grade
             table.setItem(row,col,QTableWidgetItem(grade))
             col+=1
         row+=1
