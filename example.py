@@ -129,7 +129,7 @@ def cellChangedAttendance(self):
                 if item:
                     item = item.text()
                     db.stuAbsence(name)
-                    db.stuMod(name,date,item,True)                  
+                    db.stuMod(name,date,item)                  
                     
                     db.save()
 
@@ -153,7 +153,7 @@ def cellChangedGrades(self):
                 item = ui.gradesTable.currentItem()#value of changed cell
                 if item:
                     item = item.text()
-                    db.stuMod(name,header,item, True)
+                    db.stuMod(name,header,item)
                     db.save()
                     
 #--------------------------------------DONE----------------------------------
@@ -209,8 +209,6 @@ def populateFeedTableFromDB(model,group):
     model.setHorizontalHeaderItem(0,QStandardItem("Date"))
     model.setHorizontalHeaderItem(1,QStandardItem("Points"))
     model.setHorizontalHeaderItem(2,QStandardItem("Comment"))
-    row=0
-
     #get the feedback dates
     groupElement=db.findGroup(group)
     datesElements=groupElement.findall(".//WeekGrade")#gets all the fb dates
@@ -218,16 +216,13 @@ def populateFeedTableFromDB(model,group):
     for date in datesElements:
         dates.append(date.attrib["name"])#gets the names of the dates
         
-    points=[]
-    for date in dates:
-        points.append(db.groCall(group,date))
-
-        
-    for name in names:
-        units=db.stuCall(name, "Units")
-        model.setItem(row,0,QStandardItem(name))
-        model.setItem(row,1,QStandardItem(units))
+    row=0
+    for i in range(0,len(dates)):
+        model.setItem(row,0,QStandardItem(dates[i]))
+        model.setItem(row,1,QStandardItem(db.groCall(group,dates[i])))
+        model.setItem(row,2,QStandardItem(db.groCommentCall(group,dates[i])))
         row+=1
+        
     return model
 #--------------------------------------DONE----------------------------------
 def projComboBoxFill(dialog):
@@ -385,7 +380,7 @@ def submitFeedback(self):
     project.show()
     
     db.groAdd(proj,ddate,points)#add weekly points and date of feedback
-    db.groCommentMode(proj,ddate,text)
+    db.groCommentMod(proj,ddate,text)
     db.save()    
 
 #--------------------------------------DONE----------------------------------
@@ -452,7 +447,7 @@ def populateAttendanceFromDB(names):
                 absences = db.stuCall(names[i],"Number_of_Absences")
                 table.setItem(i,1,QTableWidgetItem(absences))
                 #look up student's attendance on that date
-                att=db.stuCall(names[i],date,True)
+                att=db.stuCall(names[i],date)
                 table.setItem(i,col,QTableWidgetItem(att))
             col=col-1
 
@@ -484,7 +479,7 @@ def populateGradesFromDB(names):
         col=1
         for hw in assignments:
             table.setHorizontalHeaderItem(col,QTableWidgetItem(hw))
-            grade = db.stuCall(name,hw, True) #get student's grade
+            grade = db.stuCall(name,hw) #get student's grade
             table.setItem(row,col,QTableWidgetItem(grade))
             col+=1
         row+=1
@@ -569,6 +564,7 @@ if __name__=="__main__":
             studentModel=populateProjTable(studentModel,studentsInGroup)
             students.setModel(studentModel)
             students.show()
+            
         ui.weeklyPoints.addItem("1")
         ui.weeklyPoints.addItem("2")
         ui.weeklyPoints.addItem("3")

@@ -473,7 +473,8 @@ class DataInterface:
     def groAdd(self, group, header, value=""):
 
         group = self.findGroup(group)
-        cat = SubElement(group, "WeekGrade").attrib["info"] = value
+        cat = SubElement(group, "WeekGrade")
+        cat.attrib["info"] = value
         cat.attrib["name"] = header
 
     def groStuAdd(self, gname, sname):
