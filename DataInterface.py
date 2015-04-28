@@ -318,11 +318,13 @@ class DataInterface:
         students = self.data.findall(header)
 
         vlist = []
-        headers = self.deflist + self.headerList
+        headers = self.deflist
 
         if (header not in headers):
-            return ""
+            print("Fail")
+            return vlist
         for x in range(0, len(students)):
+            print(students[x].attrib["info"])
             vlist.append(students[x].attrib["info"])
         return vlist
 
