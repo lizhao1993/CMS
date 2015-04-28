@@ -129,7 +129,11 @@ def cellChangedAttendance(self):
                 if item:
                     item = item.text()
                     db.stuAbsence(name)
-                    db.stuMod(name,date,item)                  
+                    db.stuMod(name,date,item,True)
+
+                    #update Total Excused in table
+                    unexcused=db.stuCall(name,"Number_of_Absences")
+                    ui.attendanceTable.setItem(row,1,QTableWidgetItem(unexcused))
                     
                     db.save()
 
@@ -197,29 +201,26 @@ def populateProjTable(model,names):
     return model
 
 
-#--------------------------------------TODO----------------------------------
-def populateFeedTableFromDB(model,group):
+#--------------------------------------DONE?----------------------------------
+def populateFeedTableFromDB(group):
     """
     input: model for the project feedback table view and a list of names
     output: model;
     populateProjTable is called once a new project is added. It creates a two-
     column table that includes the names of the students in the project and the
     number of units each student is registered for. 
-    """
+    """    
+    dates=db.groMassDateCall(group)
+    
+    model=QStandardItemModel(len(dates),3)
     model.setHorizontalHeaderItem(0,QStandardItem("Date"))
     model.setHorizontalHeaderItem(1,QStandardItem("Points"))
     model.setHorizontalHeaderItem(2,QStandardItem("Comment"))
-    #get the feedback dates
-    groupElement=db.findGroup(group)
-    datesElements=groupElement.findall(".//WeekGrade")#gets all the fb dates
-    dates=[]
-    for date in datesElements:
-        dates.append(date.attrib["name"])#gets the names of the dates
         
     row=0
     for i in range(0,len(dates)):
         model.setItem(row,0,QStandardItem(dates[i]))
-        model.setItem(row,1,QStandardItem(db.groCall(group,dates[i])))
+        model.setItem(row,1,QStandardItem(db.groCall(group,dates[i])))#points
         model.setItem(row,2,QStandardItem(db.groCommentCall(group,dates[i])))
         row+=1
         
@@ -357,7 +358,7 @@ def accepted():
     #create model for project feedback & dates
     feedmodel=QStandardItemModel(0,3)
     feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
-    feedModel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Points"))
     feedmodel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
@@ -372,10 +373,13 @@ def submitFeedback(self):
 
     project=ui.page.findChild(QTableView,"projFeedback_"+proj)#should return a tableView
     feedModel=project.model()
-    toAdd=[QStandardItem(ddate),QStandardItem(text)]
+    toAdd=[QStandardItem(ddate),QStandardItem(points),QStandardItem(text)]
     
     if feedModel==None:
         feedModel=QStandardItemModel()
+        feedModel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+        feedModel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+        feedModel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
     feedModel.appendRow(toAdd)
     project.setModel(feedModel)
     project.show()
@@ -386,7 +390,6 @@ def submitFeedback(self):
 
     ui.chooseProject.setCurrentIndex(0)    
     year=date.today().year
-    print(year)
     ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
     ui.weeklyPoints.setCurrentIndex(0)
     ui.feedBackText.clear()  
@@ -455,7 +458,7 @@ def populateAttendanceFromDB(names):
                 absences = db.stuCall(names[i],"Number_of_Absences")
                 table.setItem(i,1,QTableWidgetItem(absences))
                 #look up student's attendance on that date
-                att=db.stuCall(names[i],date)
+                att=db.stuCall(names[i],date,True)
                 table.setItem(i,col,QTableWidgetItem(att))
             col=col-1
 
@@ -544,7 +547,6 @@ if __name__=="__main__":
     if os.path.isfile(filename):
         db = DataInterface.DataInterface(filename)
         year=date.today().year
-        print(year)
         ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
         
         names = db.stuMassCall("Name")
@@ -566,7 +568,6 @@ if __name__=="__main__":
             tables=addProjectTables(group)
             students=tables[0]
             projectFeedback=tables[1]
-            projectFeedback.show()
             
             studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
             studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
@@ -576,6 +577,10 @@ if __name__=="__main__":
             studentModel=populateProjTable(studentModel,studentsInGroup)
             students.setModel(studentModel)
             students.show()
+            
+            feedModel=populateFeedTableFromDB(group)
+            projectFeedback.setModel(feedModel)
+            projectFeedback.show()
             
         ui.weeklyPoints.addItem("1")
         ui.weeklyPoints.addItem("2")
