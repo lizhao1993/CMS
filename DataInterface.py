@@ -202,15 +202,16 @@ class DataInterface:
         the given student element. """
 
         if(assign): return self.findAssignDate(name,header).attrib["info"]
-
-        return self.findStudent(name).find(header).attrib["info"]
+        student = self.findStudent(name)
+        path = ".//" + header
+        return student.find(path).attrib["info"]
 
     def stuAbsence(self, name):
         """  """
 
         student = self.findStudent(name)
         dateList = self.findDates()
-        slist = student.getchildren()
+        slist = student.finda
 
         absence = 0
         excused = 0
