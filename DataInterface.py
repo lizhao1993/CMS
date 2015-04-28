@@ -211,19 +211,18 @@ class DataInterface:
 
         student = self.findStudent(name)
         dateList = self.findDates()
-        slist = student.finda
+        slist = student.findall("AssignDate")
 
         absence = 0
         excused = 0
 
         for x in range(0, len(slist)):
-            if(slist[x].tag == "AssignDate"):
-                if(slist[x].attrib["name"] in dateList):
-                    if(slist[x].attrib["info"] == "E"):
-                        excused += 1
-                    else:
-                        if(slist[x].attrib["info"] != "Y"):
-                            absence += 1
+            if(slist[x].attrib["name"] in dateList):
+                if(slist[x].attrib["info"] == "E"):
+                    excused += 1
+                else:
+                    if(slist[x].attrib["info"] != "Y"):
+                        absence += 1
 
         if (absence>0):
             absence +=1
