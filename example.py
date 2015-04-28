@@ -355,9 +355,10 @@ def accepted():
     students.setModel(model)
     
     #create model for project feedback & dates
-    feedmodel=QStandardItemModel(1,2)
+    feedmodel=QStandardItemModel(0,3)
     feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
-    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Feedback"))
+    feedModel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    feedmodel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
     projectFeedback.show()
     projectFeedback.setModel(feedmodel)
 
@@ -381,7 +382,14 @@ def submitFeedback(self):
     
     db.groAdd(proj,ddate,points)#add weekly points and date of feedback
     db.groCommentMod(proj,ddate,text)
-    db.save()    
+    db.save()  
+
+    ui.chooseProject.setCurrentIndex(0)    
+    year=date.today().year
+    print(year)
+    ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
+    ui.weeklyPoints.setCurrentIndex(0)
+    ui.feedBackText.clear()  
 
 #--------------------------------------DONE----------------------------------
 def addTodaysDate(self):
@@ -535,6 +543,9 @@ if __name__=="__main__":
     
     if os.path.isfile(filename):
         db = DataInterface.DataInterface(filename)
+        year=date.today().year
+        print(year)
+        ui.projectDateEdit.setMinimumDate(QDate(year,1,1))
         
         names = db.stuMassCall("Name")
         #Roster, Attendance, and Grades all get filled here:
@@ -555,6 +566,7 @@ if __name__=="__main__":
             tables=addProjectTables(group)
             students=tables[0]
             projectFeedback=tables[1]
+            projectFeedback.show()
             
             studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
             studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
