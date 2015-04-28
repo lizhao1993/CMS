@@ -224,8 +224,8 @@ class DataInterface:
                     if(slist[x].attrib["info"] != "Y"):
                         absence += 1
 
-        if (absence>0):
-            absence +=1
+##        if (absence>0):
+##            absence +=1
             
         student.find("Number_of_Excused").attrib["info"] = str(excused)
         student.find("Number_of_Absences").attrib["info"] = str(absence)
