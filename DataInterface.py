@@ -195,7 +195,7 @@ class DataInterface:
         the given student element. """
 
         if(assign): self.findAssignDate(name,header).attrib["info"] = value
-        else: self.findStudent(name).find(header).attrib["info"]
+        else: self.findStudent(name).find(header).attrib["info"] = value
 
     def stuCall(self, name, header, assign = False):
         """ Gets the attribute of the given header category within
@@ -224,6 +224,9 @@ class DataInterface:
                         if(slist[x].attrib["info"] != "Y"):
                             absence += 1
 
+        if (absence>0):
+            absence +=1
+            
         student.find("Number_of_Excused").attrib["info"] = str(excused)
         student.find("Number_of_Absences").attrib["info"] = str(absence)
 
