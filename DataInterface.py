@@ -195,7 +195,7 @@ class DataInterface:
         the given student element. """
 
         if(assign): self.findAssignDate(name,header).attrib["info"] = value
-        else: self.findStudent(name).find(header).attrib["info"]
+        else: self.findStudent(name).find(header).attrib["info"] = value
 
     def stuCall(self, name, header, assign = False):
         """ Gets the attribute of the given header category within
@@ -470,7 +470,8 @@ class DataInterface:
     def groAdd(self, group, header, value=""):
 
         group = self.findGroup(group)
-        cat = SubElement(group, "WeekGrade").attrib["info"] = value
+        cat = SubElement(group, "WeekGrade")
+        cat.attrib["info"] = value
         cat.attrib["name"] = header
 
     def groStuAdd(self, gname, sname):
