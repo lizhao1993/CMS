@@ -223,9 +223,6 @@ class DataInterface:
                 else:
                     if(slist[x].attrib["info"] != "Y"):
                         absence += 1
-
-        if (absence>0):
-            absence +=1
             
         student.find("Number_of_Excused").attrib["info"] = str(excused)
         student.find("Number_of_Absences").attrib["info"] = str(absence)
@@ -400,30 +397,22 @@ class DataInterface:
         if(int(student.find("Number_of_Absences").attrib["info"]) > 3):
             grade = "Fail"
 
-        #assignlist = student.getchildren()
-        #assigns = self.findHW()
-        #totalpoints = 0
-        #for x in range(0, len(assignlist)):
-        #    if (assignlist[x].attrib["name"] in assigns):
-        #        totalpoints += int(assignlist[x].attrib["info"])
-        #if (totalpoints < 150): grade = "Fail"
+        assignlist = student.findall("AssignDate")
+        assigns = self.findHW()
+        totalpoints = 0
+        for x in range(0, len(assignlist)):
+            if (assignlist[x].attrib["name"] in assigns):
+                totalpoints += int(assignlist[x].attrib["info"])
+        if (totalpoints < 150): grade = "Fail"
 
 
-        #weeklylist = self.findGroupStu(name).getchildren()
-        #weekpoints = 0
-        #for x in range(0, len(weeklylist)):
-        #    if (weeklylist[x].tag not in self.deflist):
-        #        weekpoints += weeklylist[x].attrib["info"]
-        #if (weekpoints < 15): grade = "Fail"
-
-        #weeklylist = self.findGroupStu(name).getchildren()
-        #deflist = ["Students", "Units"]
-        #weekpoints = 0
-        #for x in range(0, len(weeklylist)):
-        #    if(weeklylist[x].tag not in deflist):
-        #        weekpoints += weeklylist[x].attrib["info"]
-        #if(weekpoints < 15): grade = "Fail"
-
+        weeklylist = self.findGroupStu(name).findall("WeekGrade")
+        weekpoints = 0
+        dlist = ["Students", "Units"]
+        for x in range(0, len(weeklylist)):
+            if (weeklylist[x].attrib["name"] not in dlist):
+                weekpoints += int(weeklylist[x].attrib["info"])
+        if (weekpoints < 15): grade = "Fail"
 
         student.find("Grade").attrib["info"] = grade
 
