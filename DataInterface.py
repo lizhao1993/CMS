@@ -190,17 +190,20 @@ class DataInterface:
         student.find("In_Class").attrib["info"] = "No"
 
 
-    def stuMod(self, name, header, value=""):
+    def stuMod(self, name, header, value="", assign = False):
         """ Changes the attribute of the given header category within
         the given student element. """
 
-        self.findAssignDate(name,header).attrib["info"] = value
+        if(assign): self.findAssignDate(name,header).attrib["info"] = value
+        else: self.findStudent(name).find(header).attrib["info"]
 
-    def stuCall(self, name, header):
+    def stuCall(self, name, header, assign = False):
         """ Gets the attribute of the given header category within
         the given student element. """
 
-        return self.findAssignDate(name,header).attrib["info"]
+        if(assign): return self.findAssignDate(name,header).attrib["info"]
+
+        return self.findStudent(name).find(header).attrib["info"]
 
     def stuAbsence(self, name):
         """  """
