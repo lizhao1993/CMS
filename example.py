@@ -566,6 +566,7 @@ if __name__=="__main__":
             tables=addProjectTables(group)
             students=tables[0]
             projectFeedback=tables[1]
+            projectFeedback.show()
             
             studentsInGroup=db.findGroup(group).find("Students").attrib["info"]
             studentsInGroup=ast.literal_eval(studentsInGroup)#this converts
