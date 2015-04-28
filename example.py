@@ -126,7 +126,7 @@ def cellChangedAttendance(self):
     col = ui.attendanceTable.currentColumn()
     row = ui.attendanceTable.currentRow()    
     #get student's name
-    if col!=0 && col!=1:#can't edit first two columns
+    if col!=0 & col!=1:#can't edit first two columns
         name = ui.attendanceTable.item(row,0)
         if name:
             name = name.text()
@@ -186,7 +186,7 @@ def cellChangedGrades(self):
                 item = ui.gradesTable.currentItem()#value of changed cell
                 if item:
                     item = item.text()
-                    db.stuMod(name,header,item)
+                    db.stuMod(name,header,item,True)
                     db.save()
                     
 
@@ -487,7 +487,7 @@ def populateGradesFromDB(names):
         col=1
         for hw in assignments:
             table.setHorizontalHeaderItem(col,QTableWidgetItem(hw))
-            grade = db.stuCall(name,hw) #get student's grade
+            grade = db.stuCall(name,hw,True) #get student's grade
             table.setItem(row,col,QTableWidgetItem(grade))
             col+=1
         row+=1
