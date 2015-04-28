@@ -315,7 +315,9 @@ class DataInterface:
         header is not the tag of a category, then the function will
         return an empty string. """
 
-        students = self.data.findall(header)
+        if(header == "Name"): path = ".//Name"
+        else: path = ".//Name/" + header
+        students = self.data.findall(path)
 
         vlist = []
         headers = self.deflist
