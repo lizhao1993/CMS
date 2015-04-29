@@ -1,8 +1,3 @@
-#TODOs: getRoster()
-#TODO: Get feedback working
-#TODO: Export functionality
-#TODO: New semester/year functionality
-
 import sys
 import os.path
 import ast
@@ -206,7 +201,7 @@ def showDialog(self):
         ui.gradesTable.insertColumn(cols)        
         ui.gradesTable.setHorizontalHeaderItem(cols,QTableWidgetItem(text))
         
-        db.stuAdd(text) #add assignment as tag in each student
+        db.stuAdd(text, "0") #add assignment as tag in each student
         db.addAssignment(text) #add to list of assignments
         db.save()
 
@@ -576,7 +571,90 @@ def export():
     #save the file
     wb.save(filename = dest_filename)
     
-            
+#############################################################################
+#                                    ADD/DROP                               #
+#############################################################################
+#--------------------------------------TODO----------------------------------
+def addStudentToRoster():
+    """Adds a student to roster"""
+    inputDialog = QInputDialog()
+    name, ok = inputDialog.getText(ui.addStudent,"Name",
+                                   "Enter Student Name:")
+    email = inputDialog.getText(ui.addStudent,"Email",
+                                   "Enter Email:")#TODO: how to get multiple lines?
+    units = inputDialog.getText(ui.addStudent,"Units",
+                                   "Enter Units:")
+    if ok:
+        
+        db.addStudent(name) #add the student
+        db.stuMod(name,"Email", email)
+        db.stuMod(name,"Units", units)
+
+        db.save()
+
+
+    
+def dropStudentFromRoster():
+    """Drops a student from roster"""
+    ui.dialog = QDialog()
+    ui.form = QFormLayout(ui.dialog)
+    form = ui.form
+    #Get the info from the dialog window
+    form.addRow(QLabel("Choose student"))
+    combo=projComboBoxFill(ui.dialog)
+        form.addRow(combo)
+
+    
+    #Add the OK and Cancel buttons
+    buttonBox = QDialogButtonBox(
+        QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
+        Qt.Horizontal, ui.dialog)
+    form.addRow(buttonBox)
+    buttonBox.accepted.connect(accepted)
+    buttonBox.accepted.connect(ui.dialog.okay)#so it closes when ok pressed
+    buttonBox.rejected.connect(ui.dialog.reject)
+    
+    ui.dialog.exec_()
+
+def okay()
+    """Pass name to database, add to database if db returns 1,
+       does nothing if db returns 2, pop up window warning if
+       db returns 3""" #TODO: in construction
+    form=ui.form
+    rows=form.count()
+    fields=[]#contains names of students
+
+    projNameObj=form.itemAt(2)#returns QLayoutItem
+    projName=projNameObj.widget()#should be lineEdit
+    projName=projName.text()
+    db.addGroup(projName)#add to DB
+
+    for i in range(6,rows):#starts at item 6 in row 4
+        layoutObj=form.itemAt(i)
+        objWidget=layoutObj.widget()
+        comboText=objWidget.currentText()
+        fields.append(comboText)
+        db.groStuAdd(projName,comboText)#add student to group
+
+    db.save()
+    
+    tables=addProjectTables(projName)
+    students=tables[0]
+    projectFeedback=tables[1]
+    
+    #create model for student & units:
+    model=QStandardItemModel(len(fields),2)
+    model=populateProjTable(model,fields)
+    students.show()
+    students.setModel(model)
+    
+    #create model for project feedback & dates
+    feedmodel=QStandardItemModel(0,3)
+    feedmodel.setHorizontalHeaderItem(0,QStandardItem("Date"))
+    feedmodel.setHorizontalHeaderItem(1,QStandardItem("Points"))
+    feedmodel.setHorizontalHeaderItem(2,QStandardItem("Feedback"))
+    projectFeedback.show()
+    projectFeedback.setModel(feedmodel)
             
         
 #############################################################################
@@ -620,6 +698,9 @@ if __name__=="__main__":
     ui.gradesTable.cellChanged.connect(cellChangedGrades)    
     ui.export_2.clicked.connect(export)
     ui.submitFeedback.clicked.connect(submitFeedback)
+    #TODO:add and drop, after we change the ui
+    #ui.addStudent.clicked.connect(addStudentToRoster)
+    #ui.dropStudent.clicked.connect(dropStudentFromRoster)
 
 
 
