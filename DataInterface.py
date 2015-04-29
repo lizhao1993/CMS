@@ -209,7 +209,7 @@ class DataInterface:
         #student was previously enrolled
         else:
             student = self.findStudent(name)
-            if(student.find("In_Class") == "Yes"):
+            if(student.find("In_Class").attrib["info"] == "Yes"):
                 return 2 # attempted to re-add a currently enrolled student
             else:
                 return 3 # attempted to re-add a currently dropped student

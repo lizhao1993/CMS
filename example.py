@@ -614,15 +614,26 @@ def addStudentToRoster():
             new.setDefaultButton(QMessageBox.Save)
             res = new.exec_()
             if res == QMessageBox.Save:
-                stuMod(name,"In_Class","Yes")
+                db.stuMod(name,"In_Class","Yes")
+                db.save()
+                updateRosterView(name)
+                updateAttedanceTable(name)
+                updateGradesTable(name)
 
-        else if stuAdd:        
+        elif stuAdd == 1:    #stuAdd is 1    
             db.stuMod(name,"Email", email)
             db.stuMod(name,"Units", units)
             db.save()
             updateRosterView(name)
             updateAttedanceTable(name)
             updateGradesTable(name)
+
+        else:
+            mssgbx = QMessageBox()
+            mssgbx.setText("Student is already enrolled.")
+            mssgbx.exec_()
+            
+        
 
 def removeStudentFromTables(name):
     #something's not working about this
@@ -693,6 +704,10 @@ def dropStudentFromRoster():
 #                                    REFRESH                                #
 #############################################################################
 
+def refresh():
+    names = populateRosterFromDB()
+    populateAttendanceFromDB(names)
+    populateGradesFromDB(names)
         
 #############################################################################
 #                                      MAIN                                 #
@@ -736,6 +751,7 @@ if __name__=="__main__":
     ui.submitFeedback.clicked.connect(submitFeedback)
     ui.addStudentBttn.clicked.connect(addStudentToRoster)
     ui.dropStudentBttn.clicked.connect(dropStudentFromRoster)
+    ui.refreshBttn.clicked.connect(refresh)
 
     window.show()
     sys.exit(app.exec_())
