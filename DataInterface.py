@@ -260,16 +260,16 @@ class DataInterface:
         student = self.findStudent(name)
         print (int(student.find("Number_of_Absences").attrib["info"]))
 
-        #if(int(student.find("Number_of_Absences").attrib["info"]) >= 3):
-        #    grade = "Fail"
+        if(int(student.find("Number_of_Absences").attrib["info"]) >= 3):
+            grade = "Fail"
 
-        #assignlist = student.findall("AssignDate")
-        #assigns = self.findHW()
-        #totalpoints = 0
-        #for x in range(0, len(assignlist)):
-        #    if (assignlist[x].attrib["name"] in assigns):
-        #        totalpoints += int(assignlist[x].attrib["info"])
-        #if (totalpoints < 150): grade = "Fail"
+        assignlist = student.findall("AssignDate")
+        assigns = self.findHW()
+        totalpoints = 0
+        for x in range(0, len(assignlist)):
+            if (assignlist[x].attrib["name"] in assigns):
+                totalpoints += int(assignlist[x].attrib["info"])
+        if (totalpoints < 150): grade = "Fail"
 
 
         weeklylist = self.findGroupStu(name).findall("WeekGrade")
