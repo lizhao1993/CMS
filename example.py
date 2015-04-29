@@ -605,21 +605,24 @@ def addStudentToRoster():
         name = fields[0].text()
         email = fields[1].text()
         units = fields[2].text()
-        if (db.addStudent(name)== 3):
+        stuAdd = db.addStudent(name)
+        
+        if (stuAdd == 3):
             new = QMessageBox()
             new.setText("This student has been added before and has since then dropped. Do you want to add this student again?")
-            new.setStandardButtons(QMessageBox.Save |QMessageBox.Cancel)
+            new.setStandardButtons(QMessageBox.Save | QMessageBox.Cancel)
             new.setDefaultButton(QMessageBox.Save)
-            new.exec()
+            res = new.exec_()
+            if res == QMessageBox.Save:
+                stuMod(name,"In_Class","Yes")
 
-            
-        db.addStudent(name) #add the student
-        db.stuMod(name,"Email", email)
-        db.stuMod(name,"Units", units)
-        db.save()
-        updateRosterView(name)
-        updateAttedanceTable(name)
-        updateGradesTable(name)
+        else if stuAdd:        
+            db.stuMod(name,"Email", email)
+            db.stuMod(name,"Units", units)
+            db.save()
+            updateRosterView(name)
+            updateAttedanceTable(name)
+            updateGradesTable(name)
 
 def removeStudentFromTables(name):
     #something's not working about this
