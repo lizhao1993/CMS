@@ -564,7 +564,7 @@ class DataInterface:
         groupUnits=int(group.find("Units").attrib["info"])
         studentUnits=int(self.findStudent(sname).find("Units").attrib["info"])
         groupUnits-=studentUnits
-        group.find("Units").attrib["info"]=str(groupUnits
+        group.find("Units").attrib["info"]=str(groupUnits)
 
 
 
