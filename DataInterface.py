@@ -573,43 +573,57 @@ class DataInterface:
 
 
 
+#############################################################################
+#                        Group Data Management                              #
+#############################################################################
 
     def groMod(self, name, header, value):
-        """
-        """
+        """ Changes the attribute of the given header category within
+        the given group element. Cannot modify Units or Students as
+        those categories are handled in groStuAdd and groStuRemove."""
 
         group = self.findGroup(name)
         path = ".//WeekGrade[@name='" + header + "']"
         group.find(path).attrib["info"] = value
 
     def groCall(self, name, header):
+        """ Retrieves the attribute of the given header category within
+        the given group element. Cannot modify Units or Students as
+        those categories are handled in groStuAdd and groStuRemove."""
 
         group = self.findGroup(name)
         path = ".//WeekGrade[@name='" + header + "']"
         return group.find(path).attrib["info"]
 
     def groAdd(self, group, header, value=""):
+        """ Adds a WeekGrade subElement with the name given by header and with the
+        info attribute set to value. This subelement currently cannot be removed
+        or modified. """
 
         group = self.findGroup(group)
         cat = SubElement(group, "WeekGrade")
         cat.attrib["info"] = value
         cat.attrib["name"] = header
 
-
-
     def groCommentMod(self, name, header, comment):
-
+        """ Modifies the comment stored in the WeekGrade subelement with the name
+        attribute given by header. The comment must be a string. """
         group = self.findGroup(name)
         path = ".//WeekGrade[@name='" + header + "']"
         group.find(path).text = comment
 
     def groCommentCall(self, name, header):
+        """ Retrieves the comment stored in the WeekGrade subelement with the name
+        attribute given by header. The comment returned will be a string. """
 
         group = self.findGroup(name)
         path = ".//WeekGrade[@name='" + header + "']"
         return group.find(path).text
 
     def groMassDateCall(self, gname):
+        """ Retrieves the names of all stored WeekGrade subelements and returns them as an
+        unsorted list of strings. """
+
         group = self.findGroup(gname)
         datesElements = group.findall(".//WeekGrade")
         
