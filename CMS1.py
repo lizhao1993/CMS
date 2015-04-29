@@ -31,6 +31,9 @@ class Ui_MainWindow(object):
         self.addDateButton = QtWidgets.QPushButton(self.Attendance)
         self.addDateButton.setGeometry(QtCore.QRect(520, 30, 131, 31))
         self.addDateButton.setObjectName("addDateButton")
+        self.refreshBttn = QtWidgets.QPushButton(self.Attendance)
+        self.refreshBttn.setGeometry(QtCore.QRect(520, 80, 131, 31))
+        self.refreshBttn.setObjectName("refreshBttn")
         self.tabWidget.addTab(self.Attendance, "")
         self.Grades = QtWidgets.QWidget()
         self.Grades.setObjectName("Grades")
@@ -87,7 +90,7 @@ class Ui_MainWindow(object):
         self.toolBox = QtWidgets.QToolBox(self.projectPagesContent)
         self.toolBox.setObjectName("toolBox")
         self.page_3 = QtWidgets.QWidget()
-        self.page_3.setGeometry(QtCore.QRect(0, 0, 261, 324))
+        self.page_3.setGeometry(QtCore.QRect(0, 0, 98, 28))
         self.page_3.setObjectName("page_3")
         self.toolBox.addItem(self.page_3, "")
         self.verticalLayout.addWidget(self.toolBox)
@@ -136,7 +139,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         self.toolBox.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -144,6 +147,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.addDateButton.setText(_translate("MainWindow", "Add Date"))
+        self.refreshBttn.setText(_translate("MainWindow", "Refresh"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Attendance), _translate("MainWindow", "Attendance"))
         self.add_assignment.setText(_translate("MainWindow", "Add Assignment"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Grades), _translate("MainWindow", "Grades"))
