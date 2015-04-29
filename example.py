@@ -28,24 +28,25 @@ def getRoster(self):
     populates the roster, attendanceTable, and the gradesTable """
     
     fname = QFileDialog.getOpenFileName()
-    filename = (fname[0])
-    students = loadworkbook.getStudentsFromWorkbook(filename)
-    # Add students to the table Widget
-    table = populateAttendance(students)
-    gradesTable = populateGrades(students)
-    # TableView needs a model
-    model = QStandardItemModel(len(students),3)
-    model.setHorizontalHeaderItem(0, QStandardItem("Name"))
-    model.setHorizontalHeaderItem(1, QStandardItem("Email"))
-    model.setHorizontalHeaderItem(2, QStandardItem("Units"))    
-    # Add students to tableView
-    model = populateTableView(model,students)    
-    # Display the attendanceTable and the tableView
-    table.show()
-    gradesTable.show()
-    ui.rosterView.setModel(model)
-    
-    db.save()
+    if fname != []:
+        filename = (fname[0])
+        students = loadworkbook.getStudentsFromWorkbook(filename)
+        # Add students to the table Widget
+        table = populateAttendance(students)
+        gradesTable = populateGrades(students)
+        # TableView needs a model
+        model = QStandardItemModel(len(students),3)
+        model.setHorizontalHeaderItem(0, QStandardItem("Name"))
+        model.setHorizontalHeaderItem(1, QStandardItem("Email"))
+        model.setHorizontalHeaderItem(2, QStandardItem("Units"))    
+        # Add students to tableView
+        model = populateTableView(model,students)    
+        # Display the attendanceTable and the tableView
+        table.show()
+        gradesTable.show()
+        ui.rosterView.setModel(model)
+        
+        db.save()
 
 
 def populateTableView(model,students):

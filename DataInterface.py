@@ -201,7 +201,8 @@ class DataInterface:
 
             # adds all additional data categories.
             for x in range(0, len(self.headerList)):
-                cat = SubElement(student, "AssignDate").attrib["info"] = ""
+                cat = SubElement(student, "AssignDate")
+                cat.attrib["info"] = ""
                 cat.attrib["name"] = self.headerList[x]
 
             return 1; # added a new student
@@ -392,6 +393,8 @@ class DataInterface:
         assignments = self.data.find("Assignments")
         assignment = SubElement(assignments, "Homework")
         assignment.attrib["info"] = hwName
+        self.stuAdd(hwName)
+        self.headerList.append(hwName)
 
     def addDate(self, today):
         """ Adds an date to the list of already added date. Use
@@ -400,6 +403,8 @@ class DataInterface:
         dates = self.data.find("Dates")
         ddate = SubElement(dates, "Date")
         ddate.attrib["info"] = today
+        self.stuAdd(today)
+        self.headerList.append(today)
 
 
     def stuMassMod(self, header, vlist):
@@ -489,7 +494,7 @@ class DataInterface:
 
     def stuCatMod(self, target, name):
         """ Allows the tag of a preexisting student category to be
-        changed without effecting the category's
+        changed without affecting the category's
         stored data. """
 
         # if the header does not exist, returns false
