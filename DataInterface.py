@@ -235,7 +235,7 @@ class DataInterface:
         # initializes the absence and excused tallies
         absence = 0
         excused = 0
-
+        
         # iterates through the AssignDate list and checks categories whose name is in the date List
         for x in range(0, len(slist)):
             if(slist[x].attrib["name"] in dateList):
@@ -246,7 +246,7 @@ class DataInterface:
                 else:
                     if(slist[x].attrib["info"] != "Y"):
                         absence += 1
-
+        
         #sets the number of excused and absences categories
         student.find("Number_of_Excused").attrib["info"] = str(excused)
         student.find("Number_of_Absences").attrib["info"] = str(absence)
@@ -393,8 +393,6 @@ class DataInterface:
         assignments = self.data.find("Assignments")
         assignment = SubElement(assignments, "Homework")
         assignment.attrib["info"] = hwName
-        self.stuAdd(hwName)
-        self.headerList.append(hwName)
 
     def addDate(self, today):
         """ Adds an date to the list of already added date. Use
@@ -403,8 +401,6 @@ class DataInterface:
         dates = self.data.find("Dates")
         ddate = SubElement(dates, "Date")
         ddate.attrib["info"] = today
-        self.stuAdd(today)
-        self.headerList.append(today)
 
 
     def stuMassMod(self, header, vlist):
