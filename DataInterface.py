@@ -183,8 +183,8 @@ class DataInterface:
         unflagged. Student has all current column categories but without any
         values. If the student was already in the database returns an integer
         error message. """
-        # checks that the student was not dropped
-        if(self.findStudent(name)):
+        # student not previously enrolled
+        if not self.findStudent(name):
             students = self.data.find("Students")
             # finds the Students data category.
             student = SubElement(students, "Name")
@@ -205,11 +205,14 @@ class DataInterface:
                 cat.attrib["name"] = self.headerList[x]
 
             return 1; # added a new student
+        
+        #student was previously enrolled
         else:
-            # if the student was previously dropped, they are un-dropped
             student = self.findStudent(name)
-            if(student.find("In_Class") == "Yes"): return 2 # attempted to re-add a currently enrolled student
-            else: return 3 # attempted to re-add a currently dropped student
+            if(student.find("In_Class") == "Yes"):
+                return 2 # attempted to re-add a currently enrolled student
+            else:
+                return 3 # attempted to re-add a currently dropped student
 
     def dropStudent(self, name):
         """ Sets the InClass attribute to indicate that the student
@@ -446,9 +449,7 @@ class DataInterface:
         header is not the tag of a category, then the function will
         return an empty string. """
 
-        if(header == "Name"): path = ".//Name"
-        else: path = ".//Name/" + header
-        students = self.data.findall(path)
+        students = self.data.find("Students").getchildren()
 
         vlist = []
         headers = self.deflist
@@ -459,7 +460,11 @@ class DataInterface:
 
         # gets each non-dropped student's value at the desired element
         for x in range(0, len(students)):
-            if(students[x].find("In_Class").attrib["info"] == "Yes"): vlist.append(students[x].attrib["info"])
+            if(students[x].find("In_Class").attrib["info"] == "Yes"):
+                if header == "Name":
+                    vlist.append(students[x].attrib["info"])
+                else:
+                    vlist.append(students[x].find(header).attrib["info"])
 
         return vlist
 
