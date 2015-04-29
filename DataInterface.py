@@ -119,24 +119,29 @@ class DataInterface:
         unflagged.
         Student has all current column categories but without any
         values. """
+        # checks that the student was not dropped
+        if(self.findStudent(name)):
+            students = self.data.find("Students")
+            # finds the Students data category.
+            student = SubElement(students, "Name")
+            # adds a new subelement with the student's name as a tag.
+            student.attrib["info"] = name
+            # adds all default student data categories.
+            SubElement(student, "Email").attrib["info"] = ""
+            SubElement(student, "Units").attrib["info"] = ""
+            SubElement(student, "Number_of_Absences").attrib["info"] = "0"
+            SubElement(student, "Number_of_Excused").attrib["info"] = "0"
+            SubElement(student, "In_Class").attrib["info"] = "Yes"
+            SubElement(student, "Flag").attrib["info"] = "No"
+            SubElement(student, "Grade").attrib["info"] = "Pass"
 
-        students = self.data.find("Students")
-        # finds the Students data category.
-        student = SubElement(students, "Name")
-        # adds a new subelement with the student's name as a tag.
-        student.attrib["info"] = name
-        # adds all default student data categories.
-        SubElement(student, "Email").attrib["info"] = ""
-        SubElement(student, "Units").attrib["info"] = ""
-        SubElement(student, "Number_of_Absences").attrib["info"] = "0"
-        SubElement(student, "Number_of_Excused").attrib["info"] = "0"
-        SubElement(student, "In_Class").attrib["info"] = "Yes"
-        SubElement(student, "Flag").attrib["info"] = "No"
-        SubElement(student, "Grade").attrib["info"] = "Pass"
-
-        # adds all additional data categories.
-        for x in range(0, len(self.headerList)):
-            SubElement(student, self.headerList[x]).attrib["info"] = ""
+            # adds all additional data categories.
+            for x in range(0, len(self.headerList)):
+                cat = SubElement(student, "AssignDate").attrib["info"] = ""
+                cat.attrib["name"] = self.headerList[x]
+        else:
+            # if the student was previously dropped, they are un-dropped
+            self.findStudent(name).find("In_Class").attrib["info"] = "Yes"
 
     def addAssignment(self, hwName):
         assignments = self.data.find("Assignments")
