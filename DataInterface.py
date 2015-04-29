@@ -139,9 +139,13 @@ class DataInterface:
             for x in range(0, len(self.headerList)):
                 cat = SubElement(student, "AssignDate").attrib["info"] = ""
                 cat.attrib["name"] = self.headerList[x]
+
+            return 1;
         else:
             # if the student was previously dropped, they are un-dropped
-            self.findStudent(name).find("In_Class").attrib["info"] = "Yes"
+            student = self.findStudent(name)
+            if(student.find("In_Class") == "Yes"): return 2
+            else: return 3
 
     def addAssignment(self, hwName):
         assignments = self.data.find("Assignments")
@@ -330,8 +334,9 @@ class DataInterface:
         if (header not in headers):
             return vlist
         for x in range(0, len(students)):
-            vlist.append(students[x].attrib["info"])
-        return vlist
+            if(students[x].find("In_Class").attrib["info"] == "Yes"): vlist.append(students[x].attrib["info"])
+        if(header == "Name"): return vlist.sort()
+        else: return vlist
 
     def stuMassAssignDateCall(self, header):
 
@@ -344,7 +349,7 @@ class DataInterface:
         if (header not in headers):
             return []
         for x in range(0, len(students)):
-            vlist.append(students[x].attrib["info"])
+            if(students[x].find("In_Class").attrib["info"] == "Yes"): vlist.append(students[x].attrib["info"])
         return vlist
 
     def stuRec(self, name):
